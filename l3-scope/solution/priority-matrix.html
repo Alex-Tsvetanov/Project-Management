@@ -73,6 +73,18 @@
   .wbs .node small { display: block; color: var(--muted); font-size: 13.5px; line-height: 1.35; }
   .wbs .node .cost { margin-top: 6px; font-weight: 600; color: var(--navy); font-size: 14px; }
   .wbs .sup { border-top-color: var(--gold); }
+  .phases { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; }
+  .phases .card { padding: 14px 14px; border-top: 5px solid var(--navy-2); }
+  .phases .when { font-size: 13px; font-weight: 600; color: var(--gold); text-transform: uppercase; letter-spacing: .05em; margin-bottom: 4px; }
+  .phases h3 { font-size: 17.5px; }
+  .phases li { font-size: 15px; }
+  .swot { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .swot .card { padding: 14px 18px; border-left: 6px solid; }
+  .swot h3 { font-size: 19px; }
+  .swot li { font-size: 16px; }
+  .smart { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; margin-top: 16px; }
+  .smart div { background: var(--navy); color: #f3efe6; border-radius: 8px; padding: 10px 12px; font-size: 14px; line-height: 1.35; }
+  .smart b { display: block; font-family: "Source Serif 4", Georgia, serif; font-size: 26px; color: var(--gold); line-height: 1; margin-bottom: 4px; }
 </style>
 </head>
 <body>
@@ -91,8 +103,8 @@
   <h2>Съдържание</h2>
   <p class="sub">Сценарий 1: мобилно приложение за управление на лични финанси</p>
   <div class="toc">
-    <div><span>01</span>Приоритетната матрица: трите роли на критериите</div>
-    <div><span>02</span>Матрица и обосновка на приоритетите</div>
+    <div><span>01</span>Проектът: жизнен цикъл, SWOT анализ и SMART цели</div>
+    <div><span>02</span>Приоритетна матрица и обосновка на приоритетите</div>
     <div><span>03</span>Компромиси, стратегия за контрол и разпределение на работата</div>
     <div><span>04</span>Изводи</div>
   </div>
@@ -101,7 +113,60 @@
 
 <!-- 3 -->
 <section class="slide">
-  <span class="tag">01 · Теория</span>
+  <span class="tag">01 · Жизнен цикъл</span>
+  <h2>Жизнен цикъл на проекта</h2>
+  <p class="sub">Пет фази в рамките на фиксираните 6 месеца</p>
+  <div class="phases">
+    <div class="card"><div class="when">Седмица 1–2</div><h3>Иницииране</h3><ul><li>Цели и обхват</li><li>Заинтересовани страни</li><li>Приоритетна матрица</li><li>Одобрение от спонсора</li></ul></div>
+    <div class="card"><div class="when">Седмица 3–4</div><h3>Планиране</h3><ul><li>Разпределение на работата</li><li>Бюджет и график</li><li>Рискове</li><li>Комуникационен план</li></ul></div>
+    <div class="card"><div class="when">Месец 2–5</div><h3>Изпълнение</h3><ul><li>Дизайн и разработка</li><li>Връзка с банкови API</li><li>Тестове</li><li>Бета версия</li></ul></div>
+    <div class="card"><div class="when">През целия проект</div><h3>Мониторинг и контрол</h3><ul><li>Седмични статус отчети</li><li>Искания за промяна</li><li>План и факт по бюджета</li></ul></div>
+    <div class="card"><div class="when">Месец 6</div><h3>Закриване</h3><ul><li>Публикуване в магазините</li><li>Документация и обучение</li><li>Извлечени уроци</li></ul></div>
+  </div>
+  <div class="card" style="margin-top:18px;">
+    <p><b>Връзка с приоритетите:</b> срокът е фиксиран, затова фазите имат ясни ключови етапи (MVP в м.3, бета в м.5, пускане в м.6), а мониторингът тече паралелно с всички останали фази.</p>
+  </div>
+  <div class="num">3</div>
+</section>
+
+<!-- 4 -->
+<section class="slide">
+  <span class="tag">01 · SWOT анализ</span>
+  <h2>SWOT анализ</h2>
+  <p class="sub">Вътрешни сили и слабости, външни възможности и заплахи</p>
+  <div class="swot">
+    <div class="card" style="border-left-color:var(--accept)"><h3 class="ta">Силни страни</h3><ul><li>Анализ на разходите, а не само записването им</li><li>Автоматична връзка с банковите сметки</li><li>Екип с опит в мобилната разработка</li></ul></div>
+    <div class="card" style="border-left-color:var(--constrain)"><h3 class="tc">Слаби страни</h3><ul><li>Нова марка, все още без потребители</li><li>Ограничен бюджет и твърд срок</li><li>Зависимост от външни банкови API</li></ul></div>
+    <div class="card" style="border-left-color:var(--enhance)"><h3 class="te">Възможности</h3><ul><li>Въвеждането на еврото кара хората да преосмислят бюджета си</li><li>Отворено банкиране в ЕС (PSD2)</li><li>Растящ интерес към финансова грамотност</li></ul></div>
+    <div class="card" style="border-left-color:var(--gold)"><h3 style="color:#a8851a">Заплахи</h3><ul><li>Банкови приложения и необанки с вградени анализи</li><li>Строги изисквания за сигурност и GDPR</li><li>Ниско доверие при споделяне на финансови данни</li></ul></div>
+  </div>
+  <div class="num">4</div>
+</section>
+
+<!-- 5 -->
+<section class="slide">
+  <span class="tag">01 · SMART цели</span>
+  <h2>SMART цели на проекта</h2>
+  <p class="sub">Какво точно трябва да постигнем и как ще го измерим</p>
+  <div class="grid g3">
+    <div class="card bar c"><h3>1. Пускане на версия 1.0</h3><p>Публикувана в App Store и Google Play с всички „Must“ функции до края на месец 6, при разходи до 60&nbsp;000&nbsp;€.</p></div>
+    <div class="card bar e"><h3>2. Потребители</h3><p>10&nbsp;000 изтегляния и 3&nbsp;000 активни потребители месечно до 3 месеца след пускането.</p></div>
+    <div class="card bar a"><h3>3. Качество и сигурност</h3><p>Средна оценка поне 4,5 в магазините и нито един сериозен пробив в сигурността през първите 6 месеца.</p></div>
+  </div>
+  <p class="note" style="margin-top:18px;font-size:16px;color:var(--navy);font-weight:500;">Проверка на цел 1 по SMART:</p>
+  <div class="smart" style="margin-top:8px;">
+    <div><b>S</b>Конкретна: версия 1.0 в двата магазина</div>
+    <div><b>M</b>Измерима: всички „Must“ функции работят</div>
+    <div><b>A</b>Постижима: бюджет с резерв и 2 седмици буфер</div>
+    <div><b>R</b>Уместна: хората планират бюджета си в началото на годината</div>
+    <div><b>T</b>Със срок: края на месец 6</div>
+  </div>
+  <div class="num">5</div>
+</section>
+
+<!-- 6 -->
+<section class="slide">
+  <span class="tag">02 · Теория</span>
   <h2>Три критерия, три роли</h2>
   <p class="sub">Всеки от критериите време, разходи и обхват получава точно една роля</p>
   <div class="grid g3">
@@ -126,10 +191,10 @@
       <li><b>Стратегия за контрол:</b> как следим, че проектът остава в рамките на зададените приоритети.</li>
     </ul>
   </div>
-  <div class="num">3</div>
+  <div class="num">6</div>
 </section>
 
-<!-- 4 -->
+<!-- 7 -->
 <section class="slide">
   <span class="tag">02 · Матрица</span>
   <h2>Мобилно приложение за лични финанси</h2>
@@ -147,10 +212,10 @@
       <div class="card bar a"><h3><span class="pill a">Компромис</span>Разходи: 50&nbsp;000&nbsp;€</h3><p>Обосновано превишение е по-евтино от пропуснат пазарен прозорец.</p></div>
     </div>
   </div>
-  <div class="num">4</div>
+  <div class="num">7</div>
 </section>
 
-<!-- 5 -->
+<!-- 8 -->
 <section class="slide">
   <span class="tag">03 · Компромиси</span>
   <h2>Какви компромиси правим и защо</h2>
@@ -177,10 +242,10 @@
   <div class="card" style="margin-top:18px;">
     <p><b>Ключов компромис:</b> ако срокът е застрашен, функциите от „Could“ се отлагат за версия 1.1. Срокът не се мести. Качеството и сигурността на финансовите данни също не се жертват.</p>
   </div>
-  <div class="num">5</div>
+  <div class="num">8</div>
 </section>
 
-<!-- 6 -->
+<!-- 9 -->
 <section class="slide">
   <span class="tag">03 · Стратегия</span>
   <h2>Стратегия: как оставаме в приоритетите</h2>
@@ -214,10 +279,10 @@
   <div class="card" style="margin-top:18px;">
     <p><b>Комуникация:</b> седмичен статус отчет към екипа и клиента, доклад за ключов етап към ръководството, регистър на рисковете (банкови API, одобрение в App Store / Google Play).</p>
   </div>
-  <div class="num">6</div>
+  <div class="num">9</div>
 </section>
 
-<!-- 7 -->
+<!-- 10 -->
 <section class="slide">
   <span class="tag">03 · Разпределение на работата</span>
   <h2>Структура на разпределение на работата</h2>
@@ -233,10 +298,10 @@
     <div class="node sup"><b>3.2 Обучение</b><small>Обучение на екипа</small><div class="cost">1 500 €</div></div>
     <div class="node sup" style="grid-column: span 3;"><b>Отговорници и работни пакети</b><small>4.1 Проектиране (UX дизайнер) · 4.2 Разработка (Tech lead) · 4.3 Тестване (QA lead). Работните пакети 5.1–5.3 са групирани по същите три направления. Резерв за рискове: 3&nbsp;000&nbsp;€.</small></div>
   </div>
-  <div class="num">7</div>
+  <div class="num">10</div>
 </section>
 
-<!-- 13 -->
+<!-- 11 -->
 <section class="slide">
   <span class="tag">04 · Изводи</span>
   <h2>Какво научихме</h2>
@@ -247,10 +312,10 @@
     <div class="card"><h3>3. Контролът следва приоритета</h3><p>Най-строгите проверки стоят върху фиксирания критерий: ключовите етапи и фиксираната дата на пускане.</p></div>
     <div class="card"><h3>4. Матрицата се договаря с клиента</h3><p>Тя е част от обхвата и се преглежда с клиента и спонсора, преди да се изготви структурата на разпределение на работата.</p></div>
   </div>
-  <div class="num">8</div>
+  <div class="num">11</div>
 </section>
 
-<!-- 14 -->
+<!-- 12 -->
 <section class="slide dark" style="display:flex;flex-direction:column;justify-content:center;">
   <div class="accent"></div>
   <h1>Благодарим!</h1>
