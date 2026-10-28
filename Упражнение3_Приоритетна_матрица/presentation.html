@@ -1,0 +1,384 @@
+<!doctype html>
+<html lang="bg">
+<head>
+<meta charset="utf-8">
+<title>Приоритетна матрица на ИТ проект</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,600;8..60,700&family=Rubik:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  @page { size: 1280px 720px; margin: 0; }
+  :root {
+    --navy: #14213d;
+    --navy-2: #24345c;
+    --cream: #f6f4ef;
+    --card: #fbfaf7;
+    --line: #dcd8cf;
+    --muted: #55607a;
+    --gold: #c9a227;
+    --constrain: #b23a48;
+    --enhance: #2f6fb0;
+    --accept: #3d8b5a;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { background: var(--cream); }
+  body { font-family: "Rubik", "Helvetica Neue", Arial, sans-serif; color: var(--navy); font-size: 19px; line-height: 1.4; }
+  .slide { width: 1280px; height: 720px; padding: 64px 84px 56px; position: relative; overflow: hidden; page-break-after: always; background: var(--cream); }
+  .slide:last-child { page-break-after: auto; }
+  .dark { background: var(--navy); color: #f3efe6; }
+  h1, h2 { font-family: "Source Serif 4", Georgia, serif; font-weight: 700; letter-spacing: -0.01em; }
+  h1 { font-size: 64px; line-height: 1.08; }
+  h2 { font-size: 40px; line-height: 1.12; margin-bottom: 8px; }
+  .sub { color: var(--muted); font-size: 21px; margin-bottom: 26px; }
+  .dark .sub { color: #b9c3dc; }
+  .accent { width: 106px; height: 5px; background: var(--gold); margin-bottom: 26px; }
+  .num { position: absolute; left: 84px; bottom: 26px; font-size: 14px; color: var(--muted); }
+  .tag { display: inline-block; font-size: 13px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--gold); margin-bottom: 10px; }
+  .grid { display: grid; gap: 18px; }
+  .g2 { grid-template-columns: 1fr 1fr; }
+  .g3 { grid-template-columns: repeat(3, 1fr); }
+  .card { background: var(--card); border: 1px solid var(--line); border-radius: 10px; padding: 18px 20px; }
+  .card h3 { font-size: 20px; font-weight: 600; margin-bottom: 6px; }
+  .card p, .card li { font-size: 16.5px; color: #33405c; }
+  .card ul { padding-left: 18px; }
+  .card li { margin-bottom: 4px; }
+  .bar { border-top: 5px solid; }
+  .c { border-color: var(--constrain); } .e { border-color: var(--enhance); } .a { border-color: var(--accept); }
+  .tc { color: var(--constrain); } .te { color: var(--enhance); } .ta { color: var(--accept); }
+  /* priority matrix */
+  .matrix { border-collapse: separate; border-spacing: 0; font-size: 17px; }
+  .matrix th { font-weight: 600; padding: 8px 10px; text-align: center; }
+  .matrix th.row { text-align: left; padding-right: 16px; }
+  .matrix td { width: 128px; height: 84px; border: 1.5px solid var(--navy); text-align: center; vertical-align: middle; background: #fff; }
+  .dot { display: inline-block; width: 34px; height: 34px; border-radius: 50%; }
+  .dot.c { background: var(--constrain); } .dot.e { background: var(--enhance); } .dot.a { background: var(--accept); }
+  .why { display: flex; flex-direction: column; gap: 14px; }
+  .why .card { padding: 14px 18px; }
+  table.data { width: 100%; border-collapse: collapse; font-size: 15.5px; }
+  table.data th { text-align: left; font-weight: 600; background: var(--navy); color: #fff; padding: 8px 10px; }
+  table.data td { padding: 7px 10px; border-bottom: 1px solid var(--line); vertical-align: top; color: #2b3754; }
+  table.data tr:nth-child(even) td { background: #fbfaf7; }
+  table.data td.r, table.data th.r { text-align: right; white-space: nowrap; }
+  table.data tr.total td { font-weight: 600; border-top: 2px solid var(--navy); background: transparent; }
+  .toc { border-top: 1px solid var(--line); }
+  .toc div { display: flex; gap: 60px; padding: 20px 0; border-bottom: 1px solid var(--line); font-size: 25px; font-weight: 500; }
+  .toc span { font-family: "Source Serif 4", Georgia, serif; font-size: 30px; width: 50px; }
+  .pill { display: inline-block; font-size: 13px; font-weight: 600; padding: 3px 10px; border-radius: 99px; color: #fff; margin-right: 6px; }
+  .pill.c { background: var(--constrain); } .pill.e { background: var(--enhance); } .pill.a { background: var(--accept); }
+  .note { font-size: 15px; color: var(--muted); margin-top: 14px; }
+  .big { font-family: "Source Serif 4", Georgia, serif; font-size: 34px; font-weight: 700; }
+  .wbs { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; }
+  .wbs .root { grid-column: 1 / -1; background: var(--navy); color: #fff; border-radius: 8px; padding: 12px 16px; font-weight: 600; text-align: center; font-size: 17px; }
+  .wbs .node { background: var(--card); border: 1px solid var(--line); border-top: 4px solid var(--enhance); border-radius: 8px; padding: 10px 12px; font-size: 14.5px; }
+  .wbs .node b { display: block; font-size: 15px; margin-bottom: 4px; }
+  .wbs .node small { display: block; color: var(--muted); font-size: 13.5px; line-height: 1.35; }
+  .wbs .node .cost { margin-top: 6px; font-weight: 600; color: var(--navy); font-size: 14px; }
+  .wbs .sup { border-top-color: var(--gold); }
+</style>
+</head>
+<body>
+
+<!-- 1 -->
+<section class="slide dark" style="display:flex;flex-direction:column;justify-content:center;">
+  <div class="accent"></div>
+  <span class="tag">Лекция 3 · Дефиниране на ИТ проект</span>
+  <h1>Приоритетна матрица<br>на ИТ проект</h1>
+  <p class="sub" style="margin-top:22px;font-size:24px;">Време, разходи и обхват: какво фиксираме, какво оптимизираме и къде правим компромис</p>
+  <p style="position:absolute;bottom:56px;left:84px;color:#b9c3dc;font-size:17px;">Технически университет – София · Управление на проекти · Упражнение</p>
+</section>
+
+<!-- 2 -->
+<section class="slide">
+  <h2>Съдържание</h2>
+  <p class="sub">Два сценария, решени по една и съща схема</p>
+  <div class="toc">
+    <div><span>01</span>Приоритетната матрица: трите роли на критериите</div>
+    <div><span>02</span>Сценарий 1: мобилно приложение за лични финанси</div>
+    <div><span>03</span>Сценарий 2: AI асистент за студентите в ТУ – София</div>
+    <div><span>04</span>Сравнение на двата сценария и изводи</div>
+  </div>
+  <div class="num">2</div>
+</section>
+
+<!-- 3 -->
+<section class="slide">
+  <span class="tag">01 · Теория</span>
+  <h2>Три критерия, три роли</h2>
+  <p class="sub">Всеки от критериите време, разходи и обхват получава точно една роля</p>
+  <div class="grid g3">
+    <div class="card bar c">
+      <h3 class="tc">Фиксиран (Constrain)</h3>
+      <p>Не подлежи на промяна. Проектът трябва да го спази, дори с цената на компромис при другите два.</p>
+    </div>
+    <div class="card bar e">
+      <h3 class="te">Оптимизиран (Enhance)</h3>
+      <p>Подобряваме го, доколкото е възможно, без сериозно да нарушаваме другите два критерия.</p>
+    </div>
+    <div class="card bar a">
+      <h3 class="ta">Допустим компромис (Accept)</h3>
+      <p>Може да се отклони от плана, ако това е нужно, за да се запазят другите два.</p>
+    </div>
+  </div>
+  <div class="card" style="margin-top:22px;">
+    <h3>Как отговаряме на въпросите от упражнението за всеки сценарий</h3>
+    <ul>
+      <li><b>Матрица и обосновка:</b> кой критерий е фиксиран, кой се оптимизира и при кой допускаме компромис, и защо.</li>
+      <li><b>Компромиси:</b> какво конкретно жертваме, колко и в замяна на какво.</li>
+      <li><b>Стратегия за контрол:</b> как следим, че проектът остава в рамките на зададените приоритети.</li>
+    </ul>
+  </div>
+  <div class="num">3</div>
+</section>
+
+<!-- 4 -->
+<section class="slide">
+  <span class="tag">02 · Сценарий 1</span>
+  <h2>Мобилно приложение за лични финанси</h2>
+  <p class="sub">Срок 6 месеца · бюджет 50&nbsp;000&nbsp;€ · фокус върху анализа на личните финанси</p>
+  <div style="display:flex;gap:44px;align-items:flex-start;">
+    <table class="matrix">
+      <tr><th></th><th>Време</th><th>Обхват</th><th>Разходи</th></tr>
+      <tr><th class="row tc">Constrain</th><td><span class="dot c"></span></td><td></td><td></td></tr>
+      <tr><th class="row te">Enhance</th><td></td><td><span class="dot e"></span></td><td></td></tr>
+      <tr><th class="row ta">Accept</th><td></td><td></td><td><span class="dot a"></span></td></tr>
+    </table>
+    <div class="why" style="flex:1;">
+      <div class="card bar c"><h3><span class="pill c">Фиксирано</span>Време: 6 месеца</h3><p>Пазарът на финансови приложения е конкурентен. Пускането е обвързано с началото на годината, когато хората планират бюджета си. Закъснението означава загубени потребители.</p></div>
+      <div class="card bar e"><h3><span class="pill e">Оптимизирано</span>Обхват: функциите за анализ</h3><p>Анализът на разходите отличава продукта от конкурентите. Добавяме колкото повече стойност може в срока.</p></div>
+      <div class="card bar a"><h3><span class="pill a">Компромис</span>Разходи: 50&nbsp;000&nbsp;€</h3><p>Обосновано превишение е по-евтино от пропуснат пазарен прозорец.</p></div>
+    </div>
+  </div>
+  <div class="num">4</div>
+</section>
+
+<!-- 5 -->
+<section class="slide">
+  <span class="tag">02 · Сценарий 1</span>
+  <h2>Какви компромиси правим и защо</h2>
+  <p class="sub">Срокът е твърд, затова обхватът се приоритизира, а бюджетът поема рисковете</p>
+  <div class="grid g2">
+    <div class="card bar a">
+      <h3>Бюджет: до +20% (до 60&nbsp;000&nbsp;€)</h3>
+      <ul>
+        <li>Допълнителен разработчик в месеци 3–4, ако разработката изостава: ~6&nbsp;000&nbsp;€</li>
+        <li>Платен агрегатор на банкови API (PSD2) вместо собствена интеграция със всяка банка: ~3&nbsp;000&nbsp;€</li>
+        <li>Всяко превишение над 50&nbsp;000&nbsp;€ се одобрява от спонсора</li>
+      </ul>
+    </div>
+    <div class="card bar e">
+      <h3>Обхват: MoSCoW приоритизация</h3>
+      <ul>
+        <li><b>Must:</b> следене на разходи, категории, месечен бюджет, връзка с банка</li>
+        <li><b>Should:</b> графики и тенденции, известия при превишен бюджет</li>
+        <li><b>Could:</b> AI съвети за спестяване, цели за спестяване</li>
+        <li><b>Won't (v1):</b> инвестиции, споделени семейни сметки, уеб версия</li>
+      </ul>
+    </div>
+  </div>
+  <div class="card" style="margin-top:18px;">
+    <p><b>Ключов компромис:</b> ако срокът е застрашен, функциите от „Could“ се отлагат за версия 1.1. Срокът не се мести. Качеството и сигурността на финансовите данни също не се жертват.</p>
+  </div>
+  <div class="num">5</div>
+</section>
+
+<!-- 6 -->
+<section class="slide">
+  <span class="tag">02 · Сценарий 1</span>
+  <h2>Стратегия: как оставаме в приоритетите</h2>
+  <p class="sub">Контрол, насочен към фиксирания критерий: времето</p>
+  <div class="grid g3">
+    <div class="card bar c">
+      <h3>Контрол на времето</h3>
+      <ul>
+        <li>Двуседмични спринтове с фиксирана дата на пускане</li>
+        <li>Ключови етапи: дизайн (м.1), MVP (м.3), бета (м.5), пускане (м.6)</li>
+        <li>Буфер от 2 седмици преди пускането</li>
+      </ul>
+    </div>
+    <div class="card bar e">
+      <h3>Управление на обхвата</h3>
+      <ul>
+        <li>Подреден по приоритет списък със задачи (Product backlog)</li>
+        <li>Всяка нова идея минава през искане за промяна (change request)</li>
+        <li>Нова функция влиза само ако друга излезе</li>
+      </ul>
+    </div>
+    <div class="card bar a">
+      <h3>Наблюдение на разходите</h3>
+      <ul>
+        <li>Месечен отчет: план и факт по пакети от WBS</li>
+        <li>Праг за ескалация: отклонение над 10%</li>
+        <li>Таван 60&nbsp;000&nbsp;€, решение от спонсора</li>
+      </ul>
+    </div>
+  </div>
+  <div class="card" style="margin-top:18px;">
+    <p><b>Комуникация:</b> седмичен статус отчет към екипа и клиента, доклад за ключов етап към ръководството, регистър на рисковете (банкови API, одобрение в App Store / Google Play).</p>
+  </div>
+  <div class="num">6</div>
+</section>
+
+<!-- 7 -->
+<section class="slide">
+  <span class="tag">02 · Сценарий 1</span>
+  <h2>WBS и разпределение на бюджета</h2>
+  <p class="sub">Разработка на мобилно приложение за управление на лични финанси</p>
+  <div class="wbs">
+    <div class="root">1. Мобилно приложение за управление на лични финанси · 50&nbsp;000&nbsp;€</div>
+    <div class="node"><b>2.1 Проектиране</b><small>6.1 Дизайн на интерфейса</small><div class="cost">6&nbsp;000&nbsp;€ · м.1</div></div>
+    <div class="node"><b>2.2 Основни функции</b><small>6.2 Кодиране на следенето на разходите</small><div class="cost">18&nbsp;000&nbsp;€ · м.2–4</div></div>
+    <div class="node"><b>2.3 Финансови API</b><small>6.3 Интеграция с банкови услуги</small><div class="cost">9&nbsp;000&nbsp;€ · м.3–4</div></div>
+    <div class="node"><b>2.4 Тестване</b><small>6.4 Функционални тестове и тестове за сигурност</small><div class="cost">7&nbsp;000&nbsp;€ · м.4–5</div></div>
+    <div class="node"><b>2.5 Пускане</b><small>Публикуване в магазините, мониторинг</small><div class="cost">3&nbsp;000&nbsp;€ · м.6</div></div>
+    <div class="node sup"><b>3.1 Документация</b><small>6.5 Документация за потребителите</small><div class="cost">2 500 €</div></div>
+    <div class="node sup"><b>3.2 Обучение</b><small>Обучение на екипа</small><div class="cost">1 500 €</div></div>
+    <div class="node sup" style="grid-column: span 3;"><b>Отговорници и работни пакети</b><small>4.1 Проектиране (UX дизайнер) · 4.2 Разработка (Tech lead) · 4.3 Тестване (QA lead). Работните пакети 5.1–5.3 са групирани по същите три направления. Резерв за рискове: 3&nbsp;000&nbsp;€.</small></div>
+  </div>
+  <div class="num">7</div>
+</section>
+
+<!-- 8 -->
+<section class="slide">
+  <span class="tag">03 · Сценарий 2</span>
+  <h2>AI асистент за студентите в ТУ – София</h2>
+  <p class="sub">Надеждни отговори от одобрени източници · целеви срок 4 месеца · бюджет 30&nbsp;000&nbsp;€</p>
+  <div style="display:flex;gap:44px;align-items:flex-start;">
+    <table class="matrix">
+      <tr><th></th><th>Време</th><th>Обхват</th><th>Разходи</th></tr>
+      <tr><th class="row tc">Constrain</th><td></td><td><span class="dot c"></span></td><td></td></tr>
+      <tr><th class="row te">Enhance</th><td><span class="dot e"></span></td><td></td><td></td></tr>
+      <tr><th class="row ta">Accept</th><td></td><td></td><td><span class="dot a"></span></td></tr>
+    </table>
+    <div class="why" style="flex:1;">
+      <div class="card bar c"><h3><span class="pill c">Фиксирано</span>Обхват: надеждност и защита на данните</h3><p>Грешен отговор за изпит, такса или срок вреди на студента и на университета. GDPR не допуска компромис с личните данни.</p></div>
+      <div class="card bar e"><h3><span class="pill e">Оптимизирано</span>Време: цел 4 месеца</h3><p>Желаем асистентът да е готов за началото на семестъра, но качеството е по-важно от датата.</p></div>
+      <div class="card bar a"><h3><span class="pill a">Компромис</span>Разходи: 30&nbsp;000&nbsp;€</h3><p>Допълнителни средства са оправдани, ако купуват сигурност или по-кратък срок.</p></div>
+    </div>
+  </div>
+  <div class="num">8</div>
+</section>
+
+<!-- 9 -->
+<section class="slide">
+  <span class="tag">03 · Сценарий 2</span>
+  <h2>Какви компромиси правим и защо</h2>
+  <p class="sub">Качеството е фиксирано, затова се пести от ширината на продукта и се плаща за скорост</p>
+  <div class="grid g2">
+    <div class="card bar a">
+      <h3>Бюджет: до +25% (до 37 500 €)</h3>
+      <ul>
+        <li>Готова LLM услуга с хостинг в ЕС вместо собствен модел: по-бързо, но с месечна такса</li>
+        <li>Външен одит за сигурност и GDPR преди пускането: ~3&nbsp;000&nbsp;€</li>
+        <li>Допълнителен разработчик, ако целта от 4 месеца е застрашена</li>
+      </ul>
+    </div>
+    <div class="card bar e">
+      <h3>Време: по-малък първи обхват, без по-ниско качество</h3>
+      <ul>
+        <li>Първа версия: само уеб, на български, без мобилно приложение</li>
+        <li>Започваме с ключови източници: правилници, учебни планове, разписания, такси</li>
+        <li>Нови факултети и източници се добавят на етапи</li>
+      </ul>
+    </div>
+  </div>
+  <div class="card bar c" style="margin-top:18px;">
+    <p><b>Без компромис:</b> всеки отговор цитира източника си. Когато няма отговор в одобрените източници, асистентът казва „не знам“ и препраща към администрацията. Не съхраняваме лични данни без нужда.</p>
+  </div>
+  <div class="num">9</div>
+</section>
+
+<!-- 10 -->
+<section class="slide">
+  <span class="tag">03 · Сценарий 2</span>
+  <h2>Стратегия: как оставаме в приоритетите</h2>
+  <p class="sub">Контролът е насочен към фиксирания критерий: качеството на отговорите</p>
+  <div class="grid g3">
+    <div class="card bar c">
+      <h3>Качество като праг за пускане</h3>
+      <ul>
+        <li>Тестов набор от 200 реални студентски въпроса</li>
+        <li>≥ 90% верни отговори, 100% с посочен източник</li>
+        <li>Не пускаме, докато прагът не е покрит</li>
+      </ul>
+    </div>
+    <div class="card bar e">
+      <h3>Ускоряване на графика</h3>
+      <ul>
+        <li>Паралелна работа: подготовка на източници и разработка</li>
+        <li>Пилот с един факултет в месец 3</li>
+        <li>Пускане за всички в месец 4</li>
+      </ul>
+    </div>
+    <div class="card bar a">
+      <h3>Контрол на разходите</h3>
+      <ul>
+        <li>Месечен отчет: план и факт, вкл. разход за LLM заявки</li>
+        <li>Лимит на заявките на потребител</li>
+        <li>Над 30&nbsp;000&nbsp;€ само с одобрение от спонсора</li>
+      </ul>
+    </div>
+  </div>
+  <div class="card" style="margin-top:18px;">
+    <p><b>Човешки контрол:</b> администратор одобрява всеки нов източник. Студентите отбелязват грешни отговори, а екипът ги преглежда всяка седмица. DPO на университета одобрява обработката на данни.</p>
+  </div>
+  <div class="num">10</div>
+</section>
+
+<!-- 11 -->
+<section class="slide">
+  <span class="tag">03 · Сценарий 2</span>
+  <h2>WBS и разпределение на бюджета</h2>
+  <p class="sub">Разработка на AI асистент за подпомагане на студентите в ТУ – София</p>
+  <div class="wbs">
+    <div class="root">1. AI асистент за студентите в ТУ – София · 30&nbsp;000&nbsp;€</div>
+    <div class="node"><b>2.1 Проектиране</b><small>6.1 Интерфейс за студентски запитвания</small><div class="cost">3 500 € · м.1</div></div>
+    <div class="node"><b>2.2 Функционалности</b><small>6.2 Задаване на въпроси и получаване на отговори</small><div class="cost">8 500 € · м.1–3</div></div>
+    <div class="node"><b>2.3 Източници</b><small>6.3 Подготовка на одобрените източници · 6.4 Интеграция с платформата</small><div class="cost">6 500 € · м.1–3</div></div>
+    <div class="node"><b>2.4 Тестване</b><small>6.5 Точност на отговорите и защита на данните</small><div class="cost">5 500 € · м.3–4</div></div>
+    <div class="node"><b>2.5 Внедряване</b><small>Пилот с един факултет, след това за всички</small><div class="cost">2 500 € · м.3–4</div></div>
+    <div class="node sup"><b>3.1 Документация</b><small>6.6 За студенти и администратори</small><div class="cost">1 500 €</div></div>
+    <div class="node sup"><b>3.2 Обучение</b><small>Обучение на администраторите</small><div class="cost">1&nbsp;000&nbsp;€</div></div>
+    <div class="node sup" style="grid-column: span 3;"><b>Отговорници и работни пакети</b><small>4.1 Проектиране (UX дизайнер) · 4.2 Разработка (AI инженер) · 4.3 Тестване (QA и сигурност). Работните пакети 5.1–5.3 са групирани по същите три направления. Резерв за рискове: 1&nbsp;000&nbsp;€.</small></div>
+  </div>
+  <div class="num">11</div>
+</section>
+
+<!-- 12 -->
+<section class="slide">
+  <span class="tag">04 · Сравнение</span>
+  <h2>Двата сценария един до друг</h2>
+  <p class="sub">Един и същ бюджет може да е компромис, но по различни причини</p>
+  <table class="data">
+    <tr><th style="width:22%"></th><th>Сценарий 1: Лични финанси</th><th>Сценарий 2: AI асистент ТУ</th></tr>
+    <tr><td><span class="pill c">Constrain</span></td><td>Време: 6 месеца, пазарен прозорец</td><td>Обхват: надеждни отговори и защита на данните</td></tr>
+    <tr><td><span class="pill e">Enhance</span></td><td>Обхват: функции за анализ на финансите</td><td>Време: цел 4 месеца, начало на семестъра</td></tr>
+    <tr><td><span class="pill a">Accept</span></td><td>Разходи: до +20%, таван 60&nbsp;000&nbsp;€</td><td>Разходи: до +25%, таван 37 500 €</td></tr>
+    <tr><td><b>Какво жертваме</b></td><td>Функции от „Could“ отиват във версия 1.1</td><td>Ширина: само уеб и български, източници на етапи</td></tr>
+    <tr><td><b>Главен риск</b></td><td>Забавяне на банковите API интеграции</td><td>Грешни или неподкрепени AI отговори</td></tr>
+    <tr><td><b>Главна метрика</b></td><td>Изпълнение на ключовите етапи в срок</td><td>≥ 90% точност, 100% цитирани източници</td></tr>
+  </table>
+  <div class="num">12</div>
+</section>
+
+<!-- 13 -->
+<section class="slide">
+  <span class="tag">04 · Изводи</span>
+  <h2>Какво научихме</h2>
+  <p class="sub">Приоритетната матрица превръща спора „всичко е важно“ в ясни решения</p>
+  <div class="grid g2">
+    <div class="card"><h3>1. Само един критерий е фиксиран</h3><p>Ако всичко е фиксирано, няма къде да се поеме рискът. Матрицата казва предварително кое се жертва първо.</p></div>
+    <div class="card"><h3>2. Компромисът има граница</h3><p>„Допустим“ не значи „неограничен“. Задаваме праг (+20% / +25%) и кой одобрява превишението.</p></div>
+    <div class="card"><h3>3. Контролът следва приоритета</h3><p>Най-строгите проверки стоят върху фиксирания критерий: ключови етапи при сценарий 1, праг за качество при сценарий 2.</p></div>
+    <div class="card"><h3>4. Матрицата се договаря с клиента</h3><p>Тя е част от обхвата и се преглежда с клиента и спонсора, преди да започне планирането по WBS.</p></div>
+  </div>
+  <div class="num">13</div>
+</section>
+
+<!-- 14 -->
+<section class="slide dark" style="display:flex;flex-direction:column;justify-content:center;">
+  <div class="accent"></div>
+  <h1>Благодарим!</h1>
+  <p class="sub" style="margin-top:20px;font-size:24px;">Въпроси и дискусия</p>
+</section>
+
+</body>
+</html>
