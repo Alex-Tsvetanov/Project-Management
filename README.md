@@ -6,10 +6,10 @@
 
 | Тема | Материали | Решение |
 |---|---|---|
-| [Лекция 1: Въведение в управлението на проекти](l1-intro) | Лекция, сценарии 1–3 и пример за упражнение 1 | [Жизнен цикъл на проект: лабораторен център](l1-intro/solution/lifecycle-lab-center.pptx) |
-| [Лекция 2: Организационна стратегия и култура](l2-strategy) | Лекция, упражнение (SWOT анализ) | [SWOT и SMART анализ за счетоводна фирма](l2-strategy/solution/swot-smart.pdf) |
-| [Лекция 3: Дефиниране на проекта](l3-scope) | Лекция, упражнение (приоритетна матрица) | [Приоритетна матрица на ИТ проект: мобилно приложение за лични финанси](l3-scope/solution/priority-matrix.pdf) |
-| [Лекция 4: Прогнозиране, планиране и оценка при ИТ проекти](l4-estimation) | Лекция, упражнение (оценка на разходите) | [Оценка на разходите за ИТ проект: мобилно приложение за лични финанси](l4-estimation/solution/cost-estimation.pdf) |
-| [Проект: изграждане на STEM среда](stem-project) | Задание, насоки, примерни концепции, файл за попълване (`template/`) | [STEM среда и SMART цели](stem-project/solution/stem-smart-goals.pptx) · [онлайн версия](stem-project/solution/stem-smart-goals.html) · [Задание (PDF)](stem-project/solution/zadanie-stem-sreda.pdf) · [Бюджет (Excel, преглед)](stem-project/solution/concept-viewer.html) |
+| <a href="l1-intro" target="_blank" rel="noopener noreferrer">Лекция 1: Въведение в управлението на проекти</a> | Лекция, сценарии 1–3 и пример за упражнение 1 | <a href="l1-intro/solution/lifecycle-lab-center.pptx" target="_blank" rel="noopener noreferrer">Жизнен цикъл на проект: лабораторен център</a> |
+| <a href="l2-strategy" target="_blank" rel="noopener noreferrer">Лекция 2: Организационна стратегия и култура</a> | Лекция, упражнение (SWOT анализ) | <a href="l2-strategy/solution/swot-smart.pdf" target="_blank" rel="noopener noreferrer">SWOT и SMART анализ за счетоводна фирма</a> |
+| <a href="l3-scope" target="_blank" rel="noopener noreferrer">Лекция 3: Дефиниране на проекта</a> | Лекция, упражнение (приоритетна матрица) | <a href="l3-scope/solution/priority-matrix.pdf" target="_blank" rel="noopener noreferrer">Приоритетна матрица на ИТ проект: мобилно приложение за лични финанси</a> |
+| <a href="l4-estimation" target="_blank" rel="noopener noreferrer">Лекция 4: Прогнозиране, планиране и оценка при ИТ проекти</a> | Лекция, упражнение (оценка на разходите) | <a href="l4-estimation/solution/cost-estimation.pdf" target="_blank" rel="noopener noreferrer">Оценка на разходите за ИТ проект: мобилно приложение за лични финанси</a> |
+| <a href="stem-project" target="_blank" rel="noopener noreferrer">Проект: изграждане на STEM среда</a> | Задание, насоки, примерни концепции, файл за попълване (`template/`) | <a href="stem-project/solution/stem-smart-goals.pptx" target="_blank" rel="noopener noreferrer">STEM среда и SMART цели</a> · <a href="stem-project/solution/stem-smart-goals.html" target="_blank" rel="noopener noreferrer">онлайн версия</a> · <a href="stem-project/solution/zadanie-stem-sreda.pdf" target="_blank" rel="noopener noreferrer">Задание (PDF)</a> · <a href="stem-project/solution/concept-viewer.html" target="_blank" rel="noopener noreferrer">Бюджет (Excel, преглед)</a> |
 
-[Учебен график 2026/2027](schedule.pdf)
+<a href="schedule.pdf" target="_blank" rel="noopener noreferrer">Учебен график 2026/2027</a>
