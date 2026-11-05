@@ -1,0 +1,429 @@
+<!doctype html>
+<html lang="bg">
+<head>
+<meta charset="utf-8">
+<title>Оценка на разходите за ИТ проект</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,600;8..60,700&family=Rubik:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  @page { size: 1280px 720px; margin: 0; }
+  :root {
+    --navy: #14213d;
+    --navy-2: #24345c;
+    --cream: #f6f4ef;
+    --card: #fbfaf7;
+    --line: #dcd8cf;
+    --muted: #55607a;
+    --gold: #c9a227;
+    --constrain: #b23a48;
+    --enhance: #2f6fb0;
+    --accept: #3d8b5a;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { background: var(--cream); }
+  body { font-family: "Rubik", "Helvetica Neue", Arial, sans-serif; color: var(--navy); font-size: 19px; line-height: 1.4; }
+  .slide { width: 1280px; height: 720px; padding: 64px 84px 56px; position: relative; overflow: hidden; page-break-after: always; background: var(--cream); }
+  .slide:last-child { page-break-after: auto; }
+  .dark { background: var(--navy); color: #f3efe6; }
+  h1, h2 { font-family: "Source Serif 4", Georgia, serif; font-weight: 700; letter-spacing: -0.01em; }
+  h1 { font-size: 64px; line-height: 1.08; }
+  h2 { font-size: 40px; line-height: 1.12; margin-bottom: 8px; }
+  .sub { color: var(--muted); font-size: 21px; margin-bottom: 26px; }
+  .dark .sub { color: #b9c3dc; }
+  .accent { width: 106px; height: 5px; background: var(--gold); margin-bottom: 26px; }
+  .num { position: absolute; left: 84px; bottom: 26px; font-size: 14px; color: var(--muted); }
+  .tag { display: inline-block; font-size: 13px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--gold); margin-bottom: 10px; }
+  .grid { display: grid; gap: 18px; }
+  .g2 { grid-template-columns: 1fr 1fr; }
+  .g3 { grid-template-columns: repeat(3, 1fr); }
+  .card { background: var(--card); border: 1px solid var(--line); border-radius: 10px; padding: 18px 20px; }
+  .card h3 { font-size: 20px; font-weight: 600; margin-bottom: 6px; }
+  .card p, .card li { font-size: 16.5px; color: #33405c; }
+  .card ul { padding-left: 18px; }
+  .card li { margin-bottom: 4px; }
+  .bar { border-top: 5px solid; }
+  .c { border-color: var(--constrain); } .e { border-color: var(--enhance); } .a { border-color: var(--accept); }
+  .tc { color: var(--constrain); } .te { color: var(--enhance); } .ta { color: var(--accept); }
+  /* priority matrix */
+  table.data { width: 100%; border-collapse: collapse; font-size: 15.5px; }
+  table.data th { text-align: left; font-weight: 600; background: var(--navy); color: #fff; padding: 8px 10px; }
+  table.data td { padding: 7px 10px; border-bottom: 1px solid var(--line); vertical-align: top; color: #2b3754; }
+  table.data tr:nth-child(even) td { background: #fbfaf7; }
+  table.data td.r, table.data th.r { text-align: right; white-space: nowrap; }
+  table.data tr.total td { font-weight: 600; border-top: 2px solid var(--navy); background: transparent; }
+  .toc { border-top: 1px solid var(--line); }
+  .toc div { display: flex; gap: 60px; padding: 20px 0; border-bottom: 1px solid var(--line); font-size: 25px; font-weight: 500; }
+  .pill { display: inline-block; font-size: 13px; font-weight: 600; padding: 3px 10px; border-radius: 99px; color: #fff; margin-right: 6px; }
+  .pill.c { background: var(--constrain); } .pill.e { background: var(--enhance); } .pill.a { background: var(--accept); }
+  .note { font-size: 15px; color: var(--muted); margin-top: 14px; }
+  .big { font-family: "Source Serif 4", Georgia, serif; font-size: 34px; font-weight: 700; }
+  .toc span { font-family: "Source Serif 4", Georgia, serif; font-size: 30px; width: 50px; }
+  .td { color: var(--enhance); } .bu { color: var(--accept); } .ai { color: #7a4fb5; }
+  .stack { display: flex; height: 46px; border-radius: 8px; overflow: hidden; margin: 6px 0 14px; }
+  .stack div { display: flex; align-items: center; justify-content: center; color: #fff; font-size: 13.5px; font-weight: 600; white-space: nowrap; }
+  .legend { display: grid; grid-template-columns: 1fr 1fr; gap: 6px 28px; font-size: 15.5px; }
+  .legend div { display: flex; align-items: center; gap: 10px; }
+  .legend i { width: 14px; height: 14px; border-radius: 3px; flex: none; }
+  .legend b { margin-left: auto; font-weight: 600; }
+  .bars { display: flex; flex-direction: column; gap: 12px; }
+  .bars .row { display: grid; grid-template-columns: 230px 1fr; align-items: center; gap: 14px; font-size: 16px; }
+  .bars .track { position: relative; height: 34px; }
+  .bars .fill { height: 100%; border-radius: 6px; display: flex; align-items: center; padding-left: 10px; color: #fff; font-weight: 600; font-size: 15px; white-space: nowrap; }
+  .bars .cap { position: absolute; top: -6px; bottom: -6px; border-left: 2px dashed var(--constrain); }
+  .kpi { display: flex; gap: 18px; }
+  .kpi .card { flex: 1; text-align: center; padding: 10px 10px; }
+  .kpi .big { display: block; }
+  .kpi small { color: var(--muted); font-size: 14.5px; }
+  .steps { display: flex; flex-direction: column; gap: 12px; }
+  .steps .card { display: flex; gap: 16px; align-items: flex-start; padding: 14px 18px; }
+  .steps .n { font-family: "Source Serif 4", Georgia, serif; font-size: 30px; font-weight: 700; color: var(--gold); line-height: 1; width: 28px; flex: none; }
+</style>
+</head>
+<body>
+
+<!-- 1 -->
+<section class="slide dark" style="display:flex;flex-direction:column;justify-content:center;">
+  <div class="accent"></div>
+  <span class="tag">Лекция 4 · Прогнозиране, планиране и оценка при ИТ проекти</span>
+  <h1>Оценка на разходите<br>за ИТ проект</h1>
+  <p class="sub" style="margin-top:22px;font-size:24px;">Top-Down и Bottom-Up оценка на мобилното приложение за лични финанси, сравнение с AI и рискове от отклонения</p>
+  <p style="position:absolute;bottom:56px;left:84px;color:#b9c3dc;font-size:17px;">Технически университет – София · Управление на проекти · Упражнение</p>
+</section>
+
+<!-- 2 -->
+<section class="slide">
+  <h2>Съдържание</h2>
+  <p class="sub">Задача 1: мобилно приложение за управление на лични финанси (продължение на проекта от Лекция 3)</p>
+  <div class="toc">
+    <div><span>01</span>Изходни данни от предишните лекции и допускания</div>
+    <div><span>02</span>Top-Down и Bottom-Up оценка, видове разходи и оценка на времето</div>
+    <div><span>03</span>Сравнение на оценките и решение спрямо приоритетната матрица</div>
+    <div><span>04</span>AI: алтернативна оценка и разходи за AI функцията</div>
+    <div><span>05</span>Рискове от отклонения и изводи</div>
+  </div>
+  <div class="num">2</div>
+</section>
+
+<!-- 3 -->
+<section class="slide">
+  <span class="tag">01 · Изходни данни</span>
+  <h2>Какво носим от предишните лекции</h2>
+  <p class="sub">Оценката не започва от нулата: обхватът, приоритетите и работните пакети вече са договорени</p>
+  <div class="grid g3">
+    <div class="card bar e">
+      <h3>Лекция 1 · Жизнен цикъл</h3>
+      <ul>
+        <li>Петте фази стават редове в разпределението на бюджета</li>
+        <li>Мониторингът тече през целия проект, затова управлението на проекта е отделен разход</li>
+      </ul>
+    </div>
+    <div class="card bar a">
+      <h3>Лекция 2 · SWOT и SMART</h3>
+      <ul>
+        <li>Заплахите „сигурност и GDPR“ и „зависимост от банкови API“ стават конкретни разходи: тест за проникване, правна консултация, агрегатор</li>
+        <li>SMART цел 1: версия 1.0 до месец 6, при разходи до 60&nbsp;000&nbsp;€</li>
+      </ul>
+    </div>
+    <div class="card bar c">
+      <h3>Лекция 3 · Обхват</h3>
+      <ul>
+        <li>Приоритетна матрица: време фиксирано, обхват оптимизиран, разходи с допустим компромис до 60&nbsp;000&nbsp;€</li>
+        <li>Структурата на разпределение на работата дава пакетите за Bottom-Up</li>
+        <li>MoSCoW: AI съветите са „Could“</li>
+      </ul>
+    </div>
+  </div>
+  <div class="card" style="margin-top:18px;">
+    <p><b>Отправна точка:</b> спонсорът е одобрил ориентировъчен бюджет от 50&nbsp;000&nbsp;€ и срок от 6 месеца. Сега проверяваме дали тази сума е реалистична.</p>
+  </div>
+  <div class="num">3</div>
+</section>
+
+<!-- 4 -->
+<section class="slide">
+  <span class="tag">01 · Допускания</span>
+  <h2>Допускания и ставки</h2>
+  <p class="sub">Насоките от лекцията: нормални условия, единни времеви единици, оценка от хората, които ще вършат работата</p>
+  <div class="grid g2" style="grid-template-columns: 1.15fr 1fr;">
+    <table class="data">
+      <tr><th>Роля</th><th class="r">Ставка, €/ден</th><th class="r">Човекодни</th></tr>
+      <tr><td>Ръководител на проекта</td><td class="r">200</td><td class="r">50</td></tr>
+      <tr><td>UX/UI дизайнер</td><td class="r">180</td><td class="r">25</td></tr>
+      <tr><td>Разработчик (Flutter и бекенд), 2 души</td><td class="r">220</td><td class="r">117</td></tr>
+      <tr><td>QA инженер</td><td class="r">160</td><td class="r">48</td></tr>
+      <tr class="total"><td>Общо</td><td class="r"></td><td class="r">240</td></tr>
+    </table>
+    <div class="card">
+      <ul>
+        <li><b>Нормални условия:</b> 8-часов работен ден, 21 работни дни в месеца</li>
+        <li><b>Единица:</b> работни дни (човекодни) за всички оценки</li>
+        <li><b>Ставки:</b> пълни разходи за работодателя в София, 2026 г. (220&nbsp;€/ден ≈ 4&nbsp;600&nbsp;€/месец)</li>
+        <li><b>Технология:</b> една кодова база (Flutter) за iOS и Android</li>
+        <li><b>Банки:</b> през лицензиран PSD2 агрегатор, без собствен лиценз от БНБ</li>
+        <li><b>Независимост:</b> всеки пакет се оценява отделно, без обща „закръглена“ оценка</li>
+      </ul>
+    </div>
+  </div>
+  <p class="note">Цените на външните услуги (агрегатор, облак, LLM API, тест за проникване) са допускания и трябва да се потвърдят с оферти.</p>
+  <div class="num">4</div>
+</section>
+
+<!-- 5 -->
+<section class="slide">
+  <span class="tag">02 · Top-Down</span>
+  <h2>Top-Down: бърза оценка отгоре</h2>
+  <p class="sub">Аналогия със сходни проекти + метод за разпределение (Apportion) от лекцията</p>
+  <div class="grid g2" style="grid-template-columns: 1fr 1.2fr;">
+    <div class="card bar e">
+      <h3>1. Аналогия</h3>
+      <p>Ръководството сравнява с подобни приложения (MVP с банкова интеграция на български екип) и залага <b>50&nbsp;000&nbsp;€ и 6 месеца</b>. Това е сумата, с която тръгнахме в Лекция 3.</p>
+      <p style="margin-top:10px;"><b>Плюс:</b> бърза, достатъчна за решение „да/не“.<br><b>Минус:</b> не вижда детайлите на нашия проект.</p>
+    </div>
+    <div class="card bar e">
+      <h3>2. Разпределение по исторически проценти</h3>
+      <table class="data" style="margin-top:6px;">
+        <tr><th>Фаза</th><th class="r">Дял</th><th class="r">€</th></tr>
+        <tr><td>Анализ и дизайн</td><td class="r">20%</td><td class="r">10&nbsp;000</td></tr>
+        <tr><td>Разработка</td><td class="r">50%</td><td class="r">25&nbsp;000</td></tr>
+        <tr><td>Тестване</td><td class="r">20%</td><td class="r">10&nbsp;000</td></tr>
+        <tr><td>Внедряване</td><td class="r">10%</td><td class="r">5&nbsp;000</td></tr>
+        <tr class="total"><td>Общо</td><td class="r">100%</td><td class="r">50&nbsp;000</td></tr>
+      </table>
+    </div>
+  </div>
+  <div class="card" style="margin-top:18px;">
+    <p><b>Внимание:</b> в процентите няма ред за управление на проекта, общи разходи и резерв. Ще видим, че точно там е най-голямата разлика. Методът на функционалните точки не използваме, защото нямаме исторически данни за производителността на екипа.</p>
+  </div>
+  <div class="num">5</div>
+</section>
+
+<!-- 6 -->
+<section class="slide">
+  <span class="tag">02 · Bottom-Up</span>
+  <h2>Bottom-Up: оценка по работни пакети</h2>
+  <p class="sub">Пакетите от структурата на разпределение на работата (Лекция 3), оценени от изпълнителите</p>
+  <table class="data" style="font-size:15px;">
+    <tr><th>Работен пакет</th><th>Ресурси (човекодни)</th><th class="r">Труд, €</th><th>Други преки разходи</th><th class="r">€</th></tr>
+    <tr><td>2.1 Анализ и дизайн</td><td>ръководител 8, дизайнер 25</td><td class="r">6&nbsp;100</td><td>правна консултация GDPR/PSD2</td><td class="r">2&nbsp;000</td></tr>
+    <tr><td>2.2 Основни функции</td><td>разработчици 80</td><td class="r">17&nbsp;600</td><td>облак 900, лицензи 600</td><td class="r">1&nbsp;500</td></tr>
+    <tr><td>2.3 Банкови API</td><td>разработчици 22</td><td class="r">4&nbsp;840</td><td>PSD2 агрегатор</td><td class="r">3&nbsp;000</td></tr>
+    <tr><td>2.4 Тестване</td><td>QA 35</td><td class="r">5&nbsp;600</td><td>тест за проникване 3&nbsp;500, устройства 1&nbsp;500</td><td class="r">5&nbsp;000</td></tr>
+    <tr><td>2.5 Пускане</td><td>разработчик 5, ръководител 2</td><td class="r">1&nbsp;500</td><td>акаунти в App Store и Google Play</td><td class="r">120</td></tr>
+    <tr><td>2.6 AI съвети („Could“)</td><td>разработчик 10, QA 5</td><td class="r">3&nbsp;000</td><td>LLM API за разработка и тестове</td><td class="r">300</td></tr>
+    <tr><td>3.1–3.2 Документация и обучение</td><td>QA 8, ръководител 4</td><td class="r">2&nbsp;080</td><td>–</td><td class="r">–</td></tr>
+    <tr><td>Управление на проекта</td><td>ръководител 36</td><td class="r">7&nbsp;200</td><td>–</td><td class="r">–</td></tr>
+    <tr class="total"><td>Преки разходи</td><td>240 човекодни</td><td class="r">47&nbsp;920</td><td></td><td class="r">11&nbsp;920</td></tr>
+  </table>
+  <div class="kpi" style="margin-top:12px;margin-bottom:8px;">
+    <div class="card"><small>Преки разходи</small><span class="big">59&nbsp;840&nbsp;€</span></div>
+    <div class="card"><small>+ общи и административни, 10%</small><span class="big">5&nbsp;984&nbsp;€</span></div>
+    <div class="card"><small>+ резерв за непредвидени, 10%</small><span class="big">6&nbsp;582&nbsp;€</span></div>
+    <div class="card" style="background:var(--navy);color:#fff;border-color:var(--navy);"><small style="color:#b9c3dc;">Общо Bottom-Up</small><span class="big">72&nbsp;406&nbsp;€</span></div>
+  </div>
+  <div class="num">6</div>
+</section>
+
+<!-- 7 -->
+<section class="slide">
+  <span class="tag">02 · Видове разходи</span>
+  <h2>Преки и непреки разходи</h2>
+  <p class="sub">Две трети от бюджета е труд. Непреките разходи и резервът заедно са 17%</p>
+  <div class="stack">
+    <div style="width:66.2%;background:var(--navy-2)">Труд 66%</div>
+    <div style="width:7.6%;background:var(--enhance)">8%</div>
+    <div style="width:5.8%;background:#4f9bd1">6%</div>
+    <div style="width:2.1%;background:#8dbfe3"></div>
+    <div style="width:1%;background:#bcd8ee"></div>
+    <div style="width:8.3%;background:var(--gold)">8%</div>
+    <div style="width:9.1%;background:var(--accept)">9%</div>
+  </div>
+  <div class="grid g2" style="gap:22px;">
+    <div class="card">
+      <h3>Преки разходи · 59&nbsp;840&nbsp;€</h3>
+      <div class="legend" style="grid-template-columns:1fr;">
+        <div><i style="background:var(--navy-2)"></i>Труд (ръководител, дизайнер, разработчици, QA)<b>47&nbsp;920&nbsp;€</b></div>
+        <div><i style="background:var(--enhance)"></i>Външни експерти (тест за проникване, правна консултация)<b>5&nbsp;500&nbsp;€</b></div>
+        <div><i style="background:#4f9bd1"></i>Облачни услуги и API (облак, агрегатор, LLM)<b>4&nbsp;200&nbsp;€</b></div>
+        <div><i style="background:#8dbfe3"></i>Оборудване (тестови телефони)<b>1&nbsp;500&nbsp;€</b></div>
+        <div><i style="background:#bcd8ee"></i>Софтуерни лицензи и акаунти в магазините<b>720&nbsp;€</b></div>
+      </div>
+    </div>
+    <div class="card">
+      <h3>Непреки разходи и резерв · 12&nbsp;566&nbsp;€</h3>
+      <div class="legend" style="grid-template-columns:1fr;">
+        <div><i style="background:var(--gold)"></i>Общи и административни (G&amp;A): офис, счетоводство, ръководство, 10% от преките<b>5&nbsp;984&nbsp;€</b></div>
+        <div><i style="background:var(--accept)"></i>Резерв за непредвидени разходи, 10%<b>6&nbsp;582&nbsp;€</b></div>
+      </div>
+      <p class="note" style="margin-top:12px;">Непреките разходи не са свързани с конкретен пакет, затова се разпределят като процент. Резервът е обоснован с три-точковата оценка на следващия слайд.</p>
+    </div>
+  </div>
+  <div class="num">7</div>
+</section>
+
+<!-- 8 -->
+<section class="slide">
+  <span class="tag">02 · Време</span>
+  <h2>Три-точкова оценка на рисковите пакети</h2>
+  <p class="sub">Оптимистична (О), най-вероятна (Н) и песимистична (П) оценка в работни дни · очаквана = (О + 4Н + П) / 6</p>
+  <div class="grid g2" style="grid-template-columns: 1.3fr 1fr;">
+    <table class="data">
+      <tr><th>Пакет</th><th class="r">О</th><th class="r">Н</th><th class="r">П</th><th class="r">Очаквана</th><th class="r">±σ</th></tr>
+      <tr><td>2.2 Основни функции</td><td class="r">65</td><td class="r">80</td><td class="r">110</td><td class="r">82,5</td><td class="r">7,5</td></tr>
+      <tr><td>2.3 Банкови API</td><td class="r">15</td><td class="r">22</td><td class="r">40</td><td class="r">23,8</td><td class="r">4,2</td></tr>
+      <tr><td>2.4 Тестване</td><td class="r">25</td><td class="r">35</td><td class="r">55</td><td class="r">36,7</td><td class="r">5,0</td></tr>
+      <tr><td>2.6 AI съвети</td><td class="r">8</td><td class="r">15</td><td class="r">30</td><td class="r">16,3</td><td class="r">3,7</td></tr>
+      <tr class="total"><td>Общо</td><td class="r">113</td><td class="r">152</td><td class="r">235</td><td class="r">159,3</td><td class="r">10,6</td></tr>
+    </table>
+    <div class="card bar a">
+      <h3>Обосновка на резерва</h3>
+      <ul>
+        <li>Очакваното превишение е +7 дни спрямо „най-вероятната“ оценка</li>
+        <li>С 2σ за сигурност: 7 + 21 ≈ <b>28 дни</b></li>
+        <li>28 дни × 220&nbsp;€ ≈ <b>6&nbsp;200&nbsp;€</b>, което съвпада с резерва от 10% (6&nbsp;582&nbsp;€)</li>
+      </ul>
+    </div>
+  </div>
+  <div class="card" style="margin-top:18px;">
+    <p><b>Срокът се спазва:</b> 117 дни разработка ÷ 2 разработчици ≈ 3 месеца (месеци 2–4). Ключовите етапи от Лекция 3 остават: дизайн (м.1), MVP (м.3), бета (м.5), пускане (м.6) с буфер от 2 седмици.</p>
+  </div>
+  <div class="num">8</div>
+</section>
+
+<!-- 9 -->
+<section class="slide">
+  <span class="tag">03 · Сравнение</span>
+  <h2>Top-Down срещу Bottom-Up</h2>
+  <p class="sub">Bottom-Up е с 22&nbsp;406&nbsp;€ (+45%) повече. Разликата почти не е в самата работа</p>
+  <div class="grid g2" style="grid-template-columns: 1.25fr 1fr;">
+    <table class="data">
+      <tr><th>Фаза</th><th class="r td" style="color:#fff">Top-Down</th><th class="r" style="color:#fff">Bottom-Up</th><th class="r">Разлика</th></tr>
+      <tr><td>Анализ и дизайн</td><td class="r">10&nbsp;000</td><td class="r">8&nbsp;100</td><td class="r">−1&nbsp;900</td></tr>
+      <tr><td>Разработка (2.2, 2.3, 2.6)</td><td class="r">25&nbsp;000</td><td class="r">30&nbsp;240</td><td class="r">+5&nbsp;240</td></tr>
+      <tr><td>Тестване</td><td class="r">10&nbsp;000</td><td class="r">10&nbsp;600</td><td class="r">+600</td></tr>
+      <tr><td>Внедряване, документация, обучение</td><td class="r">5&nbsp;000</td><td class="r">3&nbsp;700</td><td class="r">−1&nbsp;300</td></tr>
+      <tr><td><b>Управление, общи разходи, резерв</b></td><td class="r">–</td><td class="r">19&nbsp;766</td><td class="r"><b>+19&nbsp;766</b></td></tr>
+      <tr class="total"><td>Общо, €</td><td class="r">50&nbsp;000</td><td class="r">72&nbsp;406</td><td class="r">+22&nbsp;406</td></tr>
+    </table>
+    <div class="why" style="display:flex;flex-direction:column;gap:12px;">
+      <div class="card bar a"><h3>По-реалистична е Bottom-Up</h3><p>Изградена е от пакетите, оценена е от хората, които ще работят, и включва всички видове разходи.</p></div>
+      <div class="card bar e"><h3>Top-Down не е „грешна“</h3><p>Самата работа (52&nbsp;640&nbsp;€) е близо до 50&nbsp;000&nbsp;€. Липсват редовете, които не се виждат „отгоре“.</p></div>
+    </div>
+  </div>
+  <div class="num">9</div>
+</section>
+
+<!-- 10 -->
+<section class="slide">
+  <span class="tag">03 · Решение</span>
+  <h2>Какво правим с разликата</h2>
+  <p class="sub">Приоритетната матрица от Лекция 3 казва предварително кое се жертва първо</p>
+  <p style="margin-bottom:14px;"><span class="pill c">Фиксирано</span>Време: 6 месеца &nbsp;&nbsp;<span class="pill e">Оптимизирано</span>Обхват &nbsp;&nbsp;<span class="pill a">Компромис</span>Разходи: до 60&nbsp;000&nbsp;€</p>
+  <div class="steps">
+    <div class="card"><div class="n">1</div><div><h3>AI съветите („Could“) отиват във версия 1.1</h3><p>Спестява 4&nbsp;598&nbsp;€ (труд, LLM API, AI сценарии в теста за проникване, общи разходи и резерв). Нова обща оценка: <b>67&nbsp;808&nbsp;€</b>.</p></div></div>
+    <div class="card"><div class="n">2</div><div><h3>Базов бюджет 61&nbsp;644&nbsp;€ + резерв 6&nbsp;164&nbsp;€ при спонсора</h3><p>Базата е с 2,7% над тавана от 60&nbsp;000&nbsp;€. Разходите са допустим компромис, затова искаме одобрение от спонсора, вместо да местим срока. Резервът се отпуска само при реализиран риск.</p></div></div>
+    <div class="card"><div class="n">3</div><div><h3>Срокът и функциите „Must“ не се пипат</h3><p>Ако спонсорът откаже, следващата стъпка е да отложим функция от „Should“ (известия при превишен бюджет), а не да отлагаме пускането.</p></div></div>
+  </div>
+  <div class="num">10</div>
+</section>
+
+<!-- 11 -->
+<section class="slide">
+  <span class="tag">04 · AI оценка</span>
+  <h2>Алтернативна оценка от AI</h2>
+  <p class="sub">Същото задание, дадено на AI инструмент (Claude), без нашите числа</p>
+  <div class="grid g2" style="grid-template-columns: 1.1fr 1fr;">
+    <table class="data">
+      <tr><th>Показател</th><th class="r">Нашата</th><th class="r">AI</th></tr>
+      <tr><td>Общ бюджет</td><td class="r">72&nbsp;406&nbsp;€</td><td class="r">250&nbsp;000&nbsp;€</td></tr>
+      <tr><td>Човекодни труд</td><td class="r">240</td><td class="r">≈ 566</td></tr>
+      <tr><td>Екип в пиковия момент</td><td class="r">5</td><td class="r">7 (+ DevOps)</td></tr>
+      <tr><td>Тест за проникване</td><td class="r">3&nbsp;500&nbsp;€</td><td class="r">8&nbsp;000&nbsp;€</td></tr>
+      <tr><td>Правни услуги GDPR/PSD2</td><td class="r">2&nbsp;000&nbsp;€</td><td class="r">5&nbsp;000&nbsp;€</td></tr>
+      <tr><td>AI съвети (модул)</td><td class="r">≈ 4&nbsp;600&nbsp;€</td><td class="r">≈ 12&nbsp;000&nbsp;€</td></tr>
+      <tr><td>Резерв</td><td class="r">10%</td><td class="r">≈ 11%</td></tr>
+    </table>
+    <div style="display:flex;flex-direction:column;gap:12px;">
+      <div class="card bar c"><h3>Защо 3,5 пъти повече</h3><p>AI плаща целия екип на пълен работен ден за всичките 6 месеца, а ние плащаме реалните дни работа по пакетите. AI добавя DevOps и интеграция с 5–6 банки, а при нас MVP работи през агрегатор.</p></div>
+      <div class="card bar a"><h3>Какво взехме от AI</h3><p>Правната консултация беше пропусната и я добавихме в 2.1. Външното тестване на AI функцията стана отделен ред.</p></div>
+    </div>
+  </div>
+  <div class="card" style="margin-top:16px;">
+    <p><b>Проверка:</b> AI оценката ни отне около 1 час за заданието и 3–4 часа за проверка на цените, или ≈ 0,5 човекоден (≈ 100&nbsp;€). Сумите за агрегатора, теста за проникване и LLM API трябва да се потвърдят с оферти. Решението остава на екипа.</p>
+  </div>
+  <div class="num">11</div>
+</section>
+
+<!-- 12 -->
+<section class="slide">
+  <span class="tag">04 · AI интеграция</span>
+  <h2>Колко струва AI функцията и тестването ѝ</h2>
+  <p class="sub">Цена и време за самата интеграция, включително външно тестване, а не само за кода</p>
+  <div class="grid g2">
+    <div class="card bar e">
+      <h3>Разходи в проекта · 3&nbsp;800&nbsp;€ преки</h3>
+      <table class="data">
+        <tr><td>Разработка, 10 дни</td><td class="r">2&nbsp;200&nbsp;€</td></tr>
+        <tr><td>Вътрешни тестове на качеството, 5 дни QA</td><td class="r">800&nbsp;€</td></tr>
+        <tr><td>LLM API за разработка и регресионни тестове</td><td class="r">300&nbsp;€</td></tr>
+        <tr><td>Външно тестване: AI сценарии в теста за проникване</td><td class="r">500&nbsp;€</td></tr>
+        <tr class="total"><td>С общи разходи и резерв</td><td class="r">≈ 4&nbsp;600&nbsp;€</td></tr>
+      </table>
+    </div>
+    <div class="card bar c">
+      <h3>Какво точно тестваме</h3>
+      <ul>
+        <li>200 тестови профила: без инвестиционни съвети, без измислени суми, правилен български</li>
+        <li>Prompt injection през описанията на транзакциите</li>
+        <li>Не изпращаме лични данни към доставчика на модела (GDPR)</li>
+        <li>Време за отговор под 3 секунди и цена на заявка</li>
+      </ul>
+    </div>
+  </div>
+  <div class="grid g2" style="margin-top:16px;">
+    <div class="card"><h3>Време</h3><p>16 ± 4 дни по три-точковата оценка, плюс 1 седмица за външния тест и поправки (месеци 4–5). Пакетът не е на критичния път, защото е „Could“.</p></div>
+    <div class="card"><h3>След пускането</h3><p>3&nbsp;000 активни потребители (SMART цел 2) × 4 съвета × ~3&nbsp;000 токена ≈ 36 млн. токена месечно, или около 50–100&nbsp;€ на месец. Допускане, което проверяваме спрямо ценоразписа на доставчика.</p></div>
+  </div>
+  <div class="num">12</div>
+</section>
+
+<!-- 13 -->
+<section class="slide">
+  <span class="tag">05 · Отклонения</span>
+  <h2>Рискове от отклонения и мерки</h2>
+  <p class="sub">Причините от лекцията, приложени към нашия проект</p>
+  <table class="data">
+    <tr><th style="width:24%">Причина</th><th style="width:38%">Какво може да стане при нас</th><th>Мярка</th></tr>
+    <tr><td><b>Скрити разходи за взаимодействие</b></td><td>Банките връщат данни в различен вид, а дизайнът и бекендът чакат един друг. Пакет 2.3 расте до 40 дни</td><td>Тестова среда на агрегатора в месец 1, прототип на връзката с банка преди MVP</td></tr>
+    <tr><td><b>Нормалните условия не важат</b></td><td>Месец 6 попада в декемврийските празници. App Store отхвърля първата версия</td><td>Отпуските са в графика. Подаваме за преглед 3 седмици преди срока. Буфер от 2 седмици</td></tr>
+    <tr><td><b>Неочаквани проблеми</b></td><td>Тестът за проникване открива уязвимост: +1–2 седмици поправки</td><td>Тестът е в месец 4, а не в края. Правила за сигурност от първия спринт</td></tr>
+    <tr><td><b>Промени в обхвата</b></td><td>Клиентът иска инвестиции или семейни сметки („Won't“ за v1)</td><td>Искане за промяна. Нова функция влиза само ако друга излезе (Лекция 3)</td></tr>
+  </table>
+  <div class="card" style="margin-top:16px;">
+    <p><b>Контрол:</b> месечно сравнение план–факт по пакети, ескалация при отклонение над 10% и преоценка на оставащите пакети след всеки ключов етап.</p>
+  </div>
+  <div class="num">13</div>
+</section>
+
+<!-- 14 -->
+<section class="slide">
+  <span class="tag">05 · Изводи</span>
+  <h2>Какво научихме</h2>
+  <p class="sub">Оценката е процес, а не едно число</p>
+  <div class="grid g2">
+    <div class="card"><h3>1. Top-Down е бърз, но пропуска „невидимото“</h3><p>Работата излезе почти същата. Разликата от ~20&nbsp;000&nbsp;€ е в управлението, общите разходи и резерва.</p></div>
+    <div class="card"><h3>2. Bottom-Up е по-точен, но иска структура</h3><p>Без структурата на разпределение на работата от Лекция 3 нямаше да имаме какво да оценим отдолу нагоре.</p></div>
+    <div class="card"><h3>3. Матрицата решава какво правим с разликата</h3><p>Режем „Could“, искаме пари от спонсора, но не местим фиксирания срок.</p></div>
+    <div class="card"><h3>4. AI е второ мнение, а не отговор</h3><p>Посочи ни пропуснати разходи, но сумата му е 3,5 пъти по-висока. Всяка цена се проверява.</p></div>
+  </div>
+  <div class="num">14</div>
+</section>
+
+<!-- 15 -->
+<section class="slide dark" style="display:flex;flex-direction:column;justify-content:center;">
+  <div class="accent"></div>
+  <h1>Благодарим!</h1>
+  <p class="sub" style="margin-top:20px;font-size:24px;">Въпроси и дискусия</p>
+</section>
+
+</body>
+</html>
