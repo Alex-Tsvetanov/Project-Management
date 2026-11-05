@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="bg">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Преглед на STEM концепцията (Excel)</title>
+<style>
+  :root { --navy:#1f3a5f; --line:#d9dee7; --muted:#5b6575; --bg:#f7f8fa; --hl:#eef4fb; }
+  * { box-sizing: border-box; }
+  body { margin:0; font-family: Arial, Helvetica, sans-serif; background:var(--bg); color:#222; }
+  header { background:var(--navy); color:#fff; padding:14px 20px; display:flex; flex-wrap:wrap; gap:12px; align-items:center; justify-content:space-between; }
+  header h1 { font-size:18px; margin:0; font-weight:700; }
+  header a { color:#cfe0f5; font-size:13px; }
+  .bar { display:flex; flex-wrap:wrap; gap:8px; padding:10px 20px; background:#fff; border-bottom:1px solid var(--line); align-items:center; position:sticky; top:0; z-index:2; }
+  .tabs { display:flex; flex-wrap:wrap; gap:6px; }
+  .tab { border:1px solid var(--line); background:#fff; padding:6px 10px; border-radius:6px; cursor:pointer; font-size:13px; }
+  .tab.active { background:var(--navy); color:#fff; border-color:var(--navy); }
+  input[type=search] { padding:7px 10px; border:1px solid var(--line); border-radius:6px; min-width:240px; font-size:14px; }
+  .note { font-size:12px; color:var(--muted); padding:8px 20px; }
+  .wrap { overflow:auto; max-height:calc(100vh - 150px); margin:0 20px 24px; background:#fff; border:1px solid var(--line); border-radius:6px; }
+  table { border-collapse:collapse; font-size:13px; min-width:100%; }
+  th, td { border:1px solid var(--line); padding:5px 8px; vertical-align:top; white-space:pre-wrap; max-width:420px; }
+  th { background:#eef1f6; position:sticky; top:0; z-index:1; font-weight:600; }
+  th.rownum, td.rownum { background:#f3f5f9; color:var(--muted); text-align:right; position:sticky; left:0; z-index:1; }
+  td.num { text-align:right; font-variant-numeric: tabular-nums; }
+  td.formula { color:#8a4b00; background:#fff8ef; font-family: Menlo, Consolas, monospace; font-size:12px; }
+  tr.match td { background:var(--hl); }
+  a.src { color:#1f5fa8; word-break:break-all; }
+  .status { padding:20px; color:var(--muted); }
+</style>
+</head>
+<body>
+<header>
+  <h1>STEM концепция – преглед на Excel файла</h1>
+  <a href="concept-stem-smart-finance.xlsx" download>Изтегли .xlsx</a>
+</header>
+<div class="bar">
+  <div class="tabs" id="tabs"></div>
+  <input type="search" id="q" placeholder="Търсене в листа…" aria-label="Търсене">
+</div>
+<div class="note" id="note">Формулите (например сумите) се показват като текст, защото файлът е записан без изчислените стойности. Отвори файла в Excel, за да видиш резултатите.</div>
+<div class="wrap"><div class="status" id="status">Зареждане на файла…</div><table id="grid"></table></div>
+
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+<script>
+(function () {
+  var FILE = 'concept-stem-smart-finance.xlsx';
+  var wb = null, current = null;
+  var tabs = document.getElementById('tabs');
+  var grid = document.getElementById('grid');
+  var status = document.getElementById('status');
+  var q = document.getElementById('q');
+
+  function esc(s) { return String(s).replace(/[&<>"]/g, function (c) { return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]; }); }
+
+  function linkify(text) {
+    return esc(text).replace(/(https?:\/\/[^\s|;)]+)/g, function (u) {
+      return '<a class="src" href="' + u + '" target="_blank" rel="noopener">' + u + '</a>';
+    });
+  }
+
+  function render(name) {
+    current = name;
+    Array.prototype.forEach.call(tabs.children, function (b) {
+      b.classList.toggle('active', b.textContent === name);
+    });
+    var ws = wb.Sheets[name];
+    var ref = ws['!ref'];
+    if (!ref) { grid.innerHTML = ''; status.textContent = 'Празен лист.'; return; }
+    var range = XLSX.utils.decode_range(ref);
+    var html = ['<thead><tr><th class="rownum">№</th>'];
+    for (var c = range.s.c; c <= range.e.c; c++) html.push('<th>' + XLSX.utils.encode_col(c) + '</th>');
+    html.push('</tr></thead><tbody>');
+    for (var r = range.s.r; r <= range.e.r; r++) {
+      var row = ['<tr><td class="rownum">' + (r + 1) + '</td>'];
+      var any = false;
+      for (var cc = range.s.c; cc <= range.e.c; cc++) {
+        var cell = ws[XLSX.utils.encode_cell({ r: r, c: cc })];
+        var cls = '', out = '';
+        if (cell) {
+          any = true;
+          if (cell.f && (cell.v === undefined || cell.v === '')) {
+            cls = 'formula';
+            out = esc('=' + cell.f);
+          } else if (cell.t === 'n') {
+            cls = 'num';
+            out = (cell.w !== undefined ? esc(cell.w) : esc(cell.v));
+          } else {
+            out = linkify(cell.w !== undefined ? cell.w : (cell.v === undefined ? '' : cell.v));
+          }
+        }
+        row.push('<td class="' + cls + '">' + out + '</td>');
+      }
+      row.push('</tr>');
+      if (any) html.push(row.join(''));
+    }
+    html.push('</tbody>');
+    grid.innerHTML = html.join('');
+    status.textContent = '';
+    applyFilter();
+  }
+
+  function applyFilter() {
+    var term = q.value.trim().toLowerCase();
+    Array.prototype.forEach.call(grid.tBodies[0] ? grid.tBodies[0].rows : [], function (tr) {
+      tr.classList.toggle('match', !!term && tr.textContent.toLowerCase().indexOf(term) !== -1);
+      tr.style.display = (!term || tr.textContent.toLowerCase().indexOf(term) !== -1) ? '' : 'none';
+    });
+  }
+
+  q.addEventListener('input', applyFilter);
+
+  fetch(FILE).then(function (res) {
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    return res.arrayBuffer();
+  }).then(function (buf) {
+    wb = XLSX.read(buf, { type: 'array', cellFormula: true, cellNF: true, cellText: true });
+    wb.SheetNames.forEach(function (n) {
+      var b = document.createElement('button');
+      b.className = 'tab';
+      b.textContent = n;
+      b.addEventListener('click', function () { render(n); });
+      tabs.appendChild(b);
+    });
+    render(wb.SheetNames[0]);
+  }).catch(function (e) {
+    status.textContent = 'Файлът не може да се зареди (' + e.message + '). Провери дали страницата е отворена през GitHub Pages или локален сървър.';
+  });
+})();
+</script>
+</body>
+</html>
