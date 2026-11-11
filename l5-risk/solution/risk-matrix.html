@@ -1,0 +1,466 @@
+<!doctype html>
+<html lang="bg">
+<head>
+<meta charset="utf-8">
+<title>Матрица за оценка на риска</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,600;8..60,700&family=Rubik:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  @page { size: 1280px 720px; margin: 0; }
+  :root {
+    --navy: #14213d;
+    --navy-2: #24345c;
+    --cream: #f6f4ef;
+    --card: #fbfaf7;
+    --line: #dcd8cf;
+    --muted: #55607a;
+    --gold: #c9a227;
+    --constrain: #b23a48;
+    --enhance: #2f6fb0;
+    --accept: #3d8b5a;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { background: var(--cream); }
+  body { font-family: "Rubik", "Helvetica Neue", Arial, sans-serif; color: var(--navy); font-size: 19px; line-height: 1.4; }
+  .slide { width: 1280px; height: 720px; padding: 64px 84px 56px; position: relative; overflow: hidden; page-break-after: always; background: var(--cream); }
+  .slide:last-child { page-break-after: auto; }
+  .dark { background: var(--navy); color: #f3efe6; }
+  h1, h2 { font-family: "Source Serif 4", Georgia, serif; font-weight: 700; letter-spacing: -0.01em; }
+  h1 { font-size: 64px; line-height: 1.08; }
+  h2 { font-size: 40px; line-height: 1.12; margin-bottom: 8px; }
+  .sub { color: var(--muted); font-size: 21px; margin-bottom: 26px; }
+  .dark .sub { color: #b9c3dc; }
+  .accent { width: 106px; height: 5px; background: var(--gold); margin-bottom: 26px; }
+  .num { position: absolute; left: 84px; bottom: 26px; font-size: 14px; color: var(--muted); }
+  .tag { display: inline-block; font-size: 13px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--gold); margin-bottom: 10px; }
+  .grid { display: grid; gap: 18px; }
+  .g2 { grid-template-columns: 1fr 1fr; }
+  .g3 { grid-template-columns: repeat(3, 1fr); }
+  .card { background: var(--card); border: 1px solid var(--line); border-radius: 10px; padding: 18px 20px; }
+  .card h3 { font-size: 20px; font-weight: 600; margin-bottom: 6px; }
+  .card p, .card li { font-size: 16.5px; color: #33405c; }
+  .card ul { padding-left: 18px; }
+  .card li { margin-bottom: 4px; }
+  .bar { border-top: 5px solid; }
+  .c { border-color: var(--constrain); } .e { border-color: var(--enhance); } .a { border-color: var(--accept); }
+  .tc { color: var(--constrain); } .te { color: var(--enhance); } .ta { color: var(--accept); }
+  /* priority matrix */
+  table.data { width: 100%; border-collapse: collapse; font-size: 15.5px; }
+  table.data th { text-align: left; font-weight: 600; background: var(--navy); color: #fff; padding: 8px 10px; }
+  table.data td { padding: 7px 10px; border-bottom: 1px solid var(--line); vertical-align: top; color: #2b3754; }
+  table.data tr:nth-child(even) td { background: #fbfaf7; }
+  table.data td.r, table.data th.r { text-align: right; white-space: nowrap; }
+  table.data tr.total td { font-weight: 600; border-top: 2px solid var(--navy); background: transparent; }
+  .toc { border-top: 1px solid var(--line); }
+  .toc div { display: flex; gap: 60px; padding: 20px 0; border-bottom: 1px solid var(--line); font-size: 25px; font-weight: 500; }
+  .pill { display: inline-block; font-size: 13px; font-weight: 600; padding: 3px 10px; border-radius: 99px; color: #fff; margin-right: 6px; }
+  .pill.c { background: var(--constrain); } .pill.e { background: var(--enhance); } .pill.a { background: var(--accept); }
+  .note { font-size: 15px; color: var(--muted); margin-top: 14px; }
+  .big { font-family: "Source Serif 4", Georgia, serif; font-size: 34px; font-weight: 700; }
+  .toc span { font-family: "Source Serif 4", Georgia, serif; font-size: 30px; width: 50px; }
+  .td { color: var(--enhance); } .bu { color: var(--accept); } .ai { color: #7a4fb5; }
+  .stack { display: flex; height: 46px; border-radius: 8px; overflow: hidden; margin: 6px 0 14px; }
+  .stack div { display: flex; align-items: center; justify-content: center; color: #fff; font-size: 13.5px; font-weight: 600; white-space: nowrap; }
+  .legend { display: grid; grid-template-columns: 1fr 1fr; gap: 6px 28px; font-size: 15.5px; }
+  .legend div { display: flex; align-items: center; gap: 10px; }
+  .legend i { width: 14px; height: 14px; border-radius: 3px; flex: none; }
+  .legend b { margin-left: auto; font-weight: 600; }
+  .bars { display: flex; flex-direction: column; gap: 12px; }
+  .bars .row { display: grid; grid-template-columns: 230px 1fr; align-items: center; gap: 14px; font-size: 16px; }
+  .bars .track { position: relative; height: 34px; }
+  .bars .fill { height: 100%; border-radius: 6px; display: flex; align-items: center; padding-left: 10px; color: #fff; font-weight: 600; font-size: 15px; white-space: nowrap; }
+  .bars .cap { position: absolute; top: -6px; bottom: -6px; border-left: 2px dashed var(--constrain); }
+  .kpi { display: flex; gap: 18px; }
+  .kpi .card { flex: 1; text-align: center; padding: 10px 10px; }
+  .kpi .big { display: block; }
+  .kpi small { color: var(--muted); font-size: 14.5px; }
+  .steps { display: flex; flex-direction: column; gap: 12px; }
+  .steps .card { display: flex; gap: 16px; align-items: flex-start; padding: 14px 18px; }
+  .steps .n { font-family: "Source Serif 4", Georgia, serif; font-size: 30px; font-weight: 700; color: var(--gold); line-height: 1; width: 28px; flex: none; }
+
+  /* risk matrix */
+  .hi { background: #c8424f; } .md { background: #e0b43a; } .lo { background: #4f9a69; }
+  .thi { color: #b23a48; } .tmd { color: #a07a10; } .tlo { color: var(--accept); }
+  .sc { display: inline-block; min-width: 34px; text-align: center; font-weight: 600; color: #fff; border-radius: 6px; padding: 1px 6px; font-size: 14px; }
+  .sc.md { color: #3a2c00; }
+  .mx { display: grid; grid-template-columns: 34px 70px repeat(5, 88px); grid-template-rows: repeat(5, 74px) 30px 26px; gap: 4px; }
+  .mx .cell { border-radius: 6px; display: flex; flex-wrap: wrap; align-content: center; justify-content: center; gap: 4px; position: relative; color: #fff; }
+  .mx .cell.md { color: #3a2c00; }
+  .mx .cell .s { position: absolute; top: 3px; right: 6px; font-size: 11px; opacity: .75; }
+  .mx .rk { background: #fff; color: var(--navy); font-weight: 600; font-size: 13px; border-radius: 4px; padding: 1px 5px; box-shadow: 0 1px 2px rgba(0,0,0,.25); }
+  .mx .yl { display: flex; align-items: center; justify-content: flex-end; padding-right: 8px; font-size: 14px; color: var(--muted); }
+  .mx .xl { display: flex; align-items: center; justify-content: center; font-size: 14px; color: var(--muted); }
+  .mx .ax { font-size: 13px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: var(--navy); display: flex; align-items: center; justify-content: center; }
+  .mx .ay { grid-row: 1 / span 5; writing-mode: vertical-rl; transform: rotate(180deg); }
+  .cat { font-size: 12px; font-weight: 600; padding: 2px 7px; border-radius: 99px; color: #fff; white-space: nowrap; }
+  .cat.t { background: var(--enhance); } .cat.s { background: #7a4fb5; } .cat.p { background: var(--navy-2); } .cat.o { background: #8a6d3b; }
+  table.data.tight td, table.data.tight th { padding: 4px 8px; font-size: 14.5px; line-height: 1.3; }
+  .strat { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
+  .strat .card h3 { font-size: 18px; }
+  .strat .card p { font-size: 15px; }
+  .strat .ids { margin: 6px 0 8px; display: flex; gap: 6px; flex-wrap: wrap; }
+  .strat .ids span { font-size: 13px; font-weight: 600; border: 1px solid var(--line); border-radius: 4px; padding: 1px 6px; background: #fff; }
+</style>
+</head>
+<body>
+
+<!-- 1 -->
+<section class="slide dark" style="display:flex;flex-direction:column;justify-content:center;">
+  <div class="accent"></div>
+  <span class="tag">Лекция 5 · Управление на риска при ИТ проекти</span>
+  <h1>Матрица за оценка на риска<br>за ИТ проект</h1>
+  <p class="sub" style="margin-top:22px;font-size:24px;">Идентификация, оценка, план за отговор и контрол на рисковете при мобилното приложение за лични финанси</p>
+  <p style="position:absolute;bottom:56px;left:84px;color:#b9c3dc;font-size:17px;">Технически университет – София · Управление на проекти · Упражнение</p>
+</section>
+
+<!-- 2 -->
+<section class="slide">
+  <h2>Съдържание</h2>
+  <p class="sub">Мобилно приложение за лични финанси: продължение на проекта от Лекции 3 и 4</p>
+  <div class="toc">
+    <div><span>01</span>Изходни данни от предишните лекции, процес и скали</div>
+    <div><span>02</span>Идентификация: структура за разбивка на риска и профил на риска</div>
+    <div><span>03</span>Оценка: регистър, матрица, FMEA и PERT</div>
+    <div><span>04</span>План за отговор и рискове на AI интеграцията</div>
+    <div><span>05</span>Контрол, защо тези рискове са приоритетни, изводи</div>
+  </div>
+  <div class="num">2</div>
+</section>
+
+<!-- 3 -->
+<section class="slide">
+  <span class="tag">01 · Изходни данни</span>
+  <h2>Какво носим от предишните лекции</h2>
+  <p class="sub">Голяма част от рисковете вече се появиха в анализа. Сега ги събираме и оценяваме на едно място</p>
+  <div class="grid" style="grid-template-columns: repeat(4, 1fr); gap:14px;">
+    <div class="card bar e">
+      <h3>Лекция 1 · Жизнен цикъл</h3>
+      <ul>
+        <li>Рисковете се идентифицират още в началната фаза</li>
+        <li>Контролът тече паралелно с всички фази до приключването</li>
+      </ul>
+    </div>
+    <div class="card bar a">
+      <h3>Лекция 2 · SWOT</h3>
+      <ul>
+        <li>Заплахите „сигурност и GDPR“ и „зависимост от банкови API“ стават рискове С1, П1 и Т1</li>
+        <li>Слабостта „малък екип“ става риск О1</li>
+      </ul>
+    </div>
+    <div class="card bar c">
+      <h3>Лекция 3 · Обхват</h3>
+      <ul>
+        <li>Матрица: времето е фиксирано, затова рисковете за срока тежат най-много</li>
+        <li>MoSCoW и „Won't“ ограничават риска от разширяване на обхвата (О2)</li>
+      </ul>
+    </div>
+    <div class="card bar" style="border-color:var(--gold)">
+      <h3>Лекция 4 · Оценка</h3>
+      <ul>
+        <li>Базов бюджет 61&nbsp;644&nbsp;€ + резерв 6&nbsp;164&nbsp;€</li>
+        <li>Три-точковата оценка става вход за PERT</li>
+        <li>AI съветите са във версия 1.1</li>
+      </ul>
+    </div>
+  </div>
+  <div class="card" style="margin-top:18px;">
+    <p><b>Въпросът сега:</b> какво може да ни попречи да пуснем версия 1.0 до месец 6 в рамките на този бюджет, и какво правим предварително, за да не се случи.</p>
+  </div>
+  <div class="num">3</div>
+</section>
+
+<!-- 4 -->
+<section class="slide">
+  <span class="tag">01 · Процес и скали</span>
+  <h2>Четирите стъпки и как оценяваме</h2>
+  <p class="sub">Процесът от лекцията и общи скали, за да може всеки член на екипа да оценява еднакво</p>
+  <div class="steps" style="flex-direction:row;gap:12px;margin-bottom:18px;">
+    <div class="card" style="flex:1"><div class="n">1</div><div><h3>Идентификация</h3><p style="font-size:15px">Мозъчна атака с екипа, разбивка на риска, профил</p></div></div>
+    <div class="card" style="flex:1"><div class="n">2</div><div><h3>Оценка</h3><p style="font-size:15px">Вероятност × въздействие, FMEA и PERT</p></div></div>
+    <div class="card" style="flex:1"><div class="n">3</div><div><h3>План за отговор</h3><p style="font-size:15px">Избягване, намаляване, прехвърляне, приемане</p></div></div>
+    <div class="card" style="flex:1"><div class="n">4</div><div><h3>Контрол</h3><p style="font-size:15px">Регистър, отговорници, сигнали, срещи</p></div></div>
+  </div>
+  <div class="grid g3">
+    <table class="data tight">
+      <tr><th>Вероятност</th><th>В рамките на проекта</th></tr>
+      <tr><td>1 · много ниска</td><td>&lt; 10%</td></tr>
+      <tr><td>2 · ниска</td><td>10–30%</td></tr>
+      <tr><td>3 · средна</td><td>30–50%</td></tr>
+      <tr><td>4 · висока</td><td>50–70%</td></tr>
+      <tr><td>5 · много висока</td><td>&gt; 70%</td></tr>
+    </table>
+    <table class="data tight">
+      <tr><th>Въздействие</th><th>Срок или бюджет</th></tr>
+      <tr><td>1 · незначително</td><td>&lt; 2 дни, &lt; 500&nbsp;€</td></tr>
+      <tr><td>2 · малко</td><td>&lt; 1 седм., &lt; 1&nbsp;500&nbsp;€</td></tr>
+      <tr><td>3 · умерено</td><td>1–2 седм., до 3&nbsp;000&nbsp;€</td></tr>
+      <tr><td>4 · голямо</td><td>2–4 седм., до резерва</td></tr>
+      <tr><td>5 · критично</td><td>&gt; 1 мес., глоба, спиране</td></tr>
+    </table>
+    <div class="card">
+      <h3>Оценка = В × Вз (1–25)</h3>
+      <p style="margin:8px 0;"><span class="sc hi">15–25</span> висок приоритет: действие веднага, отговорник, сигнал</p>
+      <p style="margin:8px 0;"><span class="sc md">6–12</span> среден: мярка в плана, преглед всеки месец</p>
+      <p style="margin:8px 0;"><span class="sc lo">1–5</span> нисък: приемаме и наблюдаваме</p>
+      <p class="note" style="margin-top:6px;">Въздействие 4 = до резерва от 6&nbsp;164&nbsp;€ (Лекция 4).</p>
+    </div>
+  </div>
+  <div class="num">4</div>
+</section>
+
+<!-- 5 -->
+<section class="slide">
+  <span class="tag">02 · Идентификация</span>
+  <h2>Разбивка на риска и профил на риска</h2>
+  <p class="sub">Въпросите от лекцията, зададени за нашия проект. Всеки отговор „не“ или „частично“ става риск</p>
+  <table class="data tight">
+    <tr><th style="width:15%">Категория</th><th style="width:40%">Въпрос от профила</th><th style="width:33%">Отговор при нас</th><th>Риск</th></tr>
+    <tr><td><span class="cat t">Технически</span></td><td>Стабилни ли са изискванията към външните системи?</td><td>Не: всяка банка връща данните различно</td><td>Т1</td></tr>
+    <tr><td><span class="cat t">Технически</span></td><td>Има ли зависимост от график, който не контролираме?</td><td>Да: прегледът в App Store и Google Play</td><td>Т3</td></tr>
+    <tr><td><span class="cat t">Бюджет</span></td><td>Има ли риск от превишаване поради непредвидени разходи?</td><td>Да: песимистичната оценка на 2.2 е 110 дни</td><td>Т2</td></tr>
+    <tr><td><span class="cat s">Сигурност</span></td><td>Има ли планирани тестови среди и проверки за качество?</td><td>Частично: тестът за проникване е чак в месец 4</td><td>С1</td></tr>
+    <tr><td><span class="cat s">Сигурност</span></td><td>Как се тества функция, чиито отговори не са предвидими?</td><td>Само вътрешно: AI съветите (v1.1)</td><td>С2</td></tr>
+    <tr><td><span class="cat p">Правни</span></td><td>Знаем ли какви са изискванията на GDPR и PSD2?</td><td>Частично: имаме една правна консултация</td><td>П1</td></tr>
+    <tr><td><span class="cat p">Контрактори</span></td><td>Ясни ли са условията с външните доставчици?</td><td>Частично: цената на агрегатора не е фиксирана</td><td>П2</td></tr>
+    <tr><td><span class="cat o">Персонал</span></td><td>Разполага ли екипът с нужните умения и заместници?</td><td>Не: двама разработчици, без резерва</td><td>О1</td></tr>
+    <tr><td><span class="cat o">Клиент</span></td><td>Разбира ли клиентът обхвата и неговите граници?</td><td>Частично: иска инвестиции и семейни сметки</td><td>О2</td></tr>
+    <tr><td><span class="cat o">Управление</span></td><td>Одобрен ли е бюджетът от всички?</td><td>Не още: базата е с 1&nbsp;644&nbsp;€ над тавана</td><td>О3</td></tr>
+  </table>
+  <p class="note">Четири категории от разбивката: технически (Т), сигурност (С), правни (П), организационни (О). Така по-трудно пропускаме цяла група рискове.</p>
+  <div class="num">5</div>
+</section>
+
+<!-- 6 -->
+<section class="slide">
+  <span class="tag">03 · Регистър</span>
+  <h2>Регистър на рисковете</h2>
+  <p class="sub">10 риска в 4 категории, оценени по скалите от слайд 4</p>
+  <table class="data tight" style="font-size:14px">
+    <tr><th>№</th><th style="width:44%">Рисково събитие</th><th>Категория</th><th class="r">В</th><th class="r">Вз</th><th class="r">Оценка</th><th>Отговор</th></tr>
+    <tr><td><b>Т1</b></td><td>Банките връщат данни в различен вид през агрегатора, пакет 2.3 расте от 22 до 40 дни</td><td><span class="cat t">Технически</span></td><td class="r">4</td><td class="r">4</td><td class="r"><span class="sc hi">16</span></td><td>Намаляване</td></tr>
+    <tr><td><b>С2</b></td><td>AI съветите дават неверни суми или инвестиционен съвет, prompt injection през описанията на транзакциите</td><td><span class="cat s">Сигурност</span></td><td class="r">4</td><td class="r">4</td><td class="r"><span class="sc hi">16</span></td><td>Избягване</td></tr>
+    <tr><td><b>С1</b></td><td>Изтичане на финансови данни или критична уязвимост, открита късно</td><td><span class="cat s">Сигурност</span></td><td class="r">3</td><td class="r">5</td><td class="r"><span class="sc hi">15</span></td><td>Прехвърляне</td></tr>
+    <tr><td><b>П1</b></td><td>Нарушение на GDPR или PSD2 при съхранение на данни и съгласия</td><td><span class="cat p">Правни</span></td><td class="r">3</td><td class="r">5</td><td class="r"><span class="sc hi">15</span></td><td>Избягване</td></tr>
+    <tr><td><b>Т2</b></td><td>Основните функции (2.2) отнемат повече от най-вероятните 80 дни</td><td><span class="cat t">Технически</span></td><td class="r">3</td><td class="r">4</td><td class="r"><span class="sc md">12</span></td><td>Намаляване</td></tr>
+    <tr><td><b>О2</b></td><td>Клиентът иска нови функции („Won't“ за v1) по време на разработката</td><td><span class="cat o">Организационни</span></td><td class="r">4</td><td class="r">3</td><td class="r"><span class="sc md">12</span></td><td>Избягване</td></tr>
+    <tr><td><b>О1</b></td><td>Напуска или се разболява един от двамата разработчици</td><td><span class="cat o">Организационни</span></td><td class="r">2</td><td class="r">5</td><td class="r"><span class="sc md">10</span></td><td>Намаляване</td></tr>
+    <tr><td><b>Т3</b></td><td>App Store или Google Play отхвърлят първата версия</td><td><span class="cat t">Технически</span></td><td class="r">3</td><td class="r">3</td><td class="r"><span class="sc md">9</span></td><td>Намаляване</td></tr>
+    <tr><td><b>П2</b></td><td>Агрегаторът вдига цената си след пилотния период</td><td><span class="cat p">Правни</span></td><td class="r">2</td><td class="r">2</td><td class="r"><span class="sc lo">4</span></td><td>Приемане</td></tr>
+    <tr><td><b>О3</b></td><td>Спонсорът не одобрява превишението от 1&nbsp;644&nbsp;€ над тавана</td><td><span class="cat o">Организационни</span></td><td class="r">2</td><td class="r">2</td><td class="r"><span class="sc lo">4</span></td><td>Приемане</td></tr>
+  </table>
+  <div class="num">6</div>
+</section>
+
+<!-- 7 -->
+<section class="slide">
+  <span class="tag">03 · Матрица</span>
+  <h2>Матрица за оценка на риска</h2>
+  <p class="sub">Хоризонтално е вероятността, вертикално е въздействието</p>
+  <div style="display:grid;grid-template-columns:auto 1fr;gap:40px;align-items:start;">
+    <div class="mx">
+      <div class="ax ay">Въздействие</div>
+      <div class="yl">5</div><div class="cell lo"><span class="s">5</span></div><div class="cell md"><span class="s">10</span><span class="rk">О1</span></div><div class="cell hi"><span class="s">15</span><span class="rk">С1</span><span class="rk">П1</span></div><div class="cell hi"><span class="s">20</span></div><div class="cell hi"><span class="s">25</span></div>
+      <div class="yl">4</div><div class="cell lo"><span class="s">4</span></div><div class="cell md"><span class="s">8</span></div><div class="cell md"><span class="s">12</span><span class="rk">Т2</span></div><div class="cell hi"><span class="s">16</span><span class="rk">Т1</span><span class="rk">С2</span></div><div class="cell hi"><span class="s">20</span></div>
+      <div class="yl">3</div><div class="cell lo"><span class="s">3</span></div><div class="cell md"><span class="s">6</span></div><div class="cell md"><span class="s">9</span><span class="rk">Т3</span></div><div class="cell md"><span class="s">12</span><span class="rk">О2</span></div><div class="cell hi"><span class="s">15</span></div>
+      <div class="yl">2</div><div class="cell lo"><span class="s">2</span></div><div class="cell lo"><span class="s">4</span><span class="rk">П2</span><span class="rk">О3</span></div><div class="cell md"><span class="s">6</span></div><div class="cell md"><span class="s">8</span></div><div class="cell md"><span class="s">10</span></div>
+      <div class="yl">1</div><div class="cell lo"><span class="s">1</span></div><div class="cell lo"><span class="s">2</span></div><div class="cell lo"><span class="s">3</span></div><div class="cell lo"><span class="s">4</span></div><div class="cell lo"><span class="s">5</span></div>
+      <div></div><div></div><div class="xl">1</div><div class="xl">2</div><div class="xl">3</div><div class="xl">4</div><div class="xl">5</div>
+      <div></div><div></div><div class="ax" style="grid-column: 3 / span 5;">Вероятност</div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:12px;">
+      <div class="card bar" style="border-color:#c8424f"><h3 class="thi">Червено · 4 риска</h3><p>Т1, С2, С1, П1. Три от тях са сигурност и право. Това са рисковете, които могат да спрат пускането или да доведат до глоба.</p></div>
+      <div class="card bar" style="border-color:#e0b43a"><h3 class="tmd">Жълто · 4 риска</h3><p>Т2, О2, О1, Т3. Удрят главно срока, който е фиксиран, затова имат мярка в плана.</p></div>
+      <div class="card bar a"><h3 class="tlo">Зелено · 2 риска</h3><p>П2, О3. Покриват се от резерва или от решението от Лекция 4 (отлагаме функция „Should“).</p></div>
+    </div>
+  </div>
+  <div class="num">7</div>
+</section>
+
+<!-- 8 -->
+<section class="slide">
+  <span class="tag">03 · FMEA</span>
+  <h2>FMEA: колко лесно ще забележим риска</h2>
+  <p class="sub">Въздействие × вероятност × откриване (1 = веднага се вижда, 5 = почти невидим). Прилагаме го за червените рискове</p>
+  <div class="grid g2" style="grid-template-columns: 1.3fr 1fr;">
+    <table class="data">
+      <tr><th>Риск</th><th class="r">Вз</th><th class="r">В</th><th class="r">Откр.</th><th class="r">Стойност</th><th>Защо такова откриване</th></tr>
+      <tr><td><b>С2</b> AI съвети</td><td class="r">4</td><td class="r">4</td><td class="r">4</td><td class="r"><b>64</b></td><td>Грешният отговор изглежда правдоподобен</td></tr>
+      <tr><td><b>С1</b> Изтичане</td><td class="r">5</td><td class="r">3</td><td class="r">4</td><td class="r"><b>60</b></td><td>Уязвимостта не се вижда до атака или тест</td></tr>
+      <tr><td><b>П1</b> GDPR/PSD2</td><td class="r">5</td><td class="r">3</td><td class="r">3</td><td class="r"><b>45</b></td><td>Вижда се при правна проверка</td></tr>
+      <tr><td><b>Т1</b> Банкови API</td><td class="r">4</td><td class="r">4</td><td class="r">2</td><td class="r"><b>32</b></td><td>Прототипът в месец 1 го показва веднага</td></tr>
+    </table>
+    <div style="display:flex;flex-direction:column;gap:12px;">
+      <div class="card bar c"><h3>Подредбата се сменя</h3><p>В матрицата Т1 беше първи. По FMEA е последен, защото го откриваме рано и евтино. Първи излизат AI съветите и сигурността.</p></div>
+      <div class="card bar e"><h3>Внимание от лекцията</h3><p>Еднаква стойност не значи еднакъв риск. Затова гледаме и трите числа, а не само произведението.</p></div>
+    </div>
+  </div>
+  <div class="card" style="margin-top:18px;">
+    <p><b>Извод:</b> за С1 и С2 не стига да намалим вероятността. Трябва и по-добро откриване, т.е. външно тестване. За него има отделен ред в бюджета (слайд 11).</p>
+  </div>
+  <div class="num">8</div>
+</section>
+
+<!-- 9 -->
+<section class="slide">
+  <span class="tag">03 · PERT</span>
+  <h2>PERT: вероятност да се вместим в плана</h2>
+  <p class="sub">Три-точковата оценка от Лекция 4 за пакетите на критичния път на v1.0 (AI съветите са във v1.1)</p>
+  <div class="grid g2" style="grid-template-columns: 1.15fr 1fr;">
+    <div>
+      <table class="data">
+        <tr><th>Пакет (човекодни)</th><th class="r">О</th><th class="r">Н</th><th class="r">П</th><th class="r">Очаквана</th><th class="r">σ</th></tr>
+        <tr><td>2.2 Основни функции</td><td class="r">65</td><td class="r">80</td><td class="r">110</td><td class="r">82,5</td><td class="r">7,5</td></tr>
+        <tr><td>2.3 Банкови API</td><td class="r">15</td><td class="r">22</td><td class="r">40</td><td class="r">23,8</td><td class="r">4,2</td></tr>
+        <tr><td>2.4 Тестване</td><td class="r">25</td><td class="r">35</td><td class="r">55</td><td class="r">36,7</td><td class="r">5,0</td></tr>
+        <tr class="total"><td>Общо</td><td class="r">105</td><td class="r">137</td><td class="r">205</td><td class="r">143,0</td><td class="r">9,9</td></tr>
+      </table>
+      <p class="note">Очаквана = (О + 4Н + П) / 6, σ = (П − О) / 6, σ на общото = √(Σσ²). Мрежа: дизайн → основни функции → банкови API → тестване → пускане.</p>
+    </div>
+    <div class="bars" style="margin-top:4px;">
+      <div class="row"><span>Само по „най-вероятна“, 137 дни</span><div class="track"><div class="fill" style="width:27%;background:#c8424f">27%</div></div></div>
+      <div class="row"><span>+ 1σ, 153 дни</span><div class="track"><div class="fill" style="width:84%;background:#e0b43a;color:#3a2c00">84%</div></div></div>
+      <div class="row"><span>+ резерв 28 дни, 165 дни</span><div class="track"><div class="fill" style="width:98.7%;background:var(--accept)">98,7%</div></div></div>
+    </div>
+  </div>
+  <div class="card" style="margin-top:20px;">
+    <p><b>Какво казва PERT:</b> ако планираме само по най-вероятните оценки, има около 73% шанс да ги превишим. Резервът от 28 човекодни (≈ 6&nbsp;164&nbsp;€) от Лекция 4 вдига шанса до 98,7%. Затова Т2 е жълт, а не червен: покрит е от резерва, ако той не се похарчи за други рискове.</p>
+  </div>
+  <div class="num">9</div>
+</section>
+
+<!-- 10 -->
+<section class="slide">
+  <span class="tag">04 · План за отговор</span>
+  <h2>План за отговор по стратегии</h2>
+  <p class="sub">И четирите стратегии от лекцията са използвани. Всеки риск има мярка и отговорник</p>
+  <div class="strat">
+    <div class="card bar c">
+      <h3>Избягване</h3>
+      <div class="ids"><span>П1</span><span>С2</span><span>О2</span></div>
+      <p><b>П1:</b> не пазим банкови пароли. Достъпът е само през лицензиран агрегатор, а данните са в ЕС.</p>
+      <p style="margin-top:6px;"><b>С2:</b> AI съветите не влизат във v1.0. Във v1.1 само след външен тест.</p>
+      <p style="margin-top:6px;"><b>О2:</b> списъкът „Won't“ е в договора. Нова функция влиза само ако друга излезе.</p>
+    </div>
+    <div class="card bar e">
+      <h3>Намаляване</h3>
+      <div class="ids"><span>Т1</span><span>Т2</span><span>О1</span><span>Т3</span></div>
+      <p><b>Т1:</b> прототип с 2 банки в тестовата среда на агрегатора в месец 1.</p>
+      <p style="margin-top:6px;"><b>Т2:</b> седмичен план–факт за 2.2, преоценка след MVP.</p>
+      <p style="margin-top:6px;"><b>О1:</b> преглед на кода от двамата, документация.</p>
+      <p style="margin-top:6px;"><b>Т3:</b> подаване 3 седмици преди срока.</p>
+    </div>
+    <div class="card bar" style="border-color:#7a4fb5">
+      <h3>Прехвърляне</h3>
+      <div class="ids"><span>С1</span></div>
+      <p>Тестът за проникване е от външна фирма с договорна отговорност. Застраховка за кибер риск ≈ 1&nbsp;200&nbsp;€ годишно от общите разходи.</p>
+      <p style="margin-top:6px;">Плюс намаляване: тестът е в месец 4, а не в края, и има правила за сигурност от първия спринт.</p>
+    </div>
+    <div class="card bar a">
+      <h3>Приемане</h3>
+      <div class="ids"><span>П2</span><span>О3</span></div>
+      <p><b>П2:</b> по-високата цена на агрегатора се покрива от резерва.</p>
+      <p style="margin-top:6px;"><b>О3:</b> при отказ отлагаме функция „Should“ (известия при превишен бюджет), без да местим срока.</p>
+      <p class="note">Активно приемане: знаем какво правим, ако се случи.</p>
+    </div>
+  </div>
+  <div class="num">10</div>
+</section>
+
+<!-- 11 -->
+<section class="slide">
+  <span class="tag">04 · AI интеграция</span>
+  <h2>Рискът С2 и външното тестване на AI</h2>
+  <p class="sub">Най-високият риск по FMEA. Колко струва и колко време отнема тестването на самата интеграция</p>
+  <div class="grid g2">
+    <div class="card bar e">
+      <h3>Пакет AI съвети (v1.1), след мярката</h3>
+      <table class="data">
+        <tr><td>Разработка, 10 дни, и вътрешен QA, 5 дни</td><td class="r">3&nbsp;000&nbsp;€</td></tr>
+        <tr><td>LLM API за разработка и регресионни тестове</td><td class="r">300&nbsp;€</td></tr>
+        <tr><td>Външно тестване: беше 500&nbsp;€ в Лекция 4</td><td class="r"><b>1&nbsp;500&nbsp;€</b></td></tr>
+        <tr class="total"><td>Общо с общи разходи и резерв</td><td class="r">≈ 5&nbsp;800&nbsp;€</td></tr>
+      </table>
+      <p class="note">Ръстът от 1&nbsp;000&nbsp;€ е цената на по-доброто откриване (FMEA: от 4 на 2 → стойност от 64 на 32).</p>
+    </div>
+    <div class="card bar c">
+      <h3>Какво тества външният екип</h3>
+      <ul>
+        <li>200 тестови профила: без инвестиционни съвети, без измислени суми</li>
+        <li>Prompt injection през описанията на транзакциите</li>
+        <li>Лични данни не стигат до доставчика на модела (GDPR)</li>
+        <li>Отговор под 3 секунди, цена на заявка</li>
+        <li><b>Праг:</b> над 2% грешни отговора и v1.1 не излиза</li>
+      </ul>
+    </div>
+  </div>
+  <div class="grid g2" style="margin-top:16px;">
+    <div class="card"><h3>Време</h3><p>16 ± 4 дни разработка + 2 седмици външен тест и поправки (беше 1 седмица). Месеци 7–8, извън критичния път на v1.0.</p></div>
+    <div class="card"><h3>AI като инструмент за рисковете</h3><p>Използвахме AI в мозъчната атака: ≈ 1 час + 2 часа проверка (≈ 80&nbsp;€). Предложи Т3 и П2, които бяхме пропуснали. Оценките са на екипа.</p></div>
+  </div>
+  <div class="num">11</div>
+</section>
+
+<!-- 12 -->
+<section class="slide">
+  <span class="tag">05 · Контрол</span>
+  <h2>Контрол на мерките</h2>
+  <p class="sub">Регистърът е жив документ: всеки риск има отговорник и сигнал, при който се задейства резервният план</p>
+  <table class="data tight">
+    <tr><th>Риск</th><th>Отговорник</th><th style="width:40%">Сигнал (кога действаме)</th><th>Резервен план</th></tr>
+    <tr><td><b>Т1</b></td><td>Разработчик 1</td><td>Прототипът не чете данни от 2 банки до края на месец 1</td><td>MVP с 1 банка + ръчно въвеждане</td></tr>
+    <tr><td><b>С2</b></td><td>QA + външен екип</td><td>Над 2% грешни отговора в 200-те профила</td><td>v1.1 без AI, само статистики</td></tr>
+    <tr><td><b>С1</b></td><td>QA</td><td>Критична находка в теста за проникване (месец 4)</td><td>Буферът от 2 седмици отива за поправки</td></tr>
+    <tr><td><b>П1</b></td><td>Ръководител + юрист</td><td>Юристът отбележи несъответствие при прегледа в месец 2</td><td>Промяна в потока за съгласие преди бета</td></tr>
+    <tr><td><b>Т2</b></td><td>Ръководител</td><td>Под 80% изпълнение на 2.2 в края на месец 3</td><td>Резерв + функция „Should“ във v1.1</td></tr>
+    <tr><td><b>О2</b></td><td>Ръководител</td><td>Ново искане извън „Must“ и „Should“</td><td>Искане за промяна, решение от спонсора</td></tr>
+  </table>
+  <div class="grid g3" style="margin-top:14px;">
+    <div class="card"><h3>Срещи</h3><p>Рисковете са точка от седмичната среща. Всеки месец преглед на целия регистър със спонсора.</p></div>
+    <div class="card"><h3>Резерв</h3><p>6&nbsp;164&nbsp;€ се отпускат само от ръководителя при сигнал. Следим колко бързо се харчи.</p></div>
+    <div class="card"><h3>Нови рискове</h3><p>Влизат в регистъра със същите скали. След всеки ключов етап се правят нова оценка и нова матрица.</p></div>
+  </div>
+  <div class="num">12</div>
+</section>
+
+<!-- 13 -->
+<section class="slide">
+  <span class="tag">05 · Изводи</span>
+  <h2>Защо тези рискове са приоритетни</h2>
+  <p class="sub">Коментар към матрицата, до 200 думи</p>
+  <div class="grid g2" style="grid-template-columns: 1.25fr 1fr;">
+    <div class="card" style="font-size:16.5px;line-height:1.5;">
+      <p>Приложението работи с банкови данни на хора, затова най-тежките рискове не са техническите, а сигурността и правото (С1, П1). Те могат да спрат пускането или да доведат до глоба, която е по-голяма от целия бюджет. Т1 е червен, защото цялата стойност на продукта е в автоматичното четене на сметките, а зависим от външен агрегатор.</p>
+      <p style="margin-top:10px;">FMEA показа, че AI съветите (С2) са най-опасни, защото грешката е трудна за забелязване. Затова ги избегнахме във v1.0 и платихме за външно тестване във v1.1.</p>
+      <p style="margin-top:10px;">Жълтите рискове удрят срока, който по приоритетната матрица е фиксиран. PERT показа, че без резерва има 73% шанс за закъснение. Зелените рискове приемаме, защото имаме готово решение от Лекция 4.</p>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:12px;">
+      <div class="card"><h3>1. Матрицата не е достатъчна сама</h3><p>FMEA и PERT смениха подредбата и обосноваха резерва.</p></div>
+      <div class="card"><h3>2. Предишните лекции вършат работа</h3><p>SWOT даде рисковете, MoSCoW даде мерките, оценката даде резерва.</p></div>
+      <div class="card"><h3>3. Рискът се управлява и с пари</h3><p>+1&nbsp;000&nbsp;€ за външен AI тест струват по-малко от грешен финансов съвет.</p></div>
+    </div>
+  </div>
+  <div class="num">13</div>
+</section>
+
+<!-- 14 -->
+<section class="slide dark" style="display:flex;flex-direction:column;justify-content:center;">
+  <div class="accent"></div>
+  <h1>Благодарим!</h1>
+  <p class="sub" style="margin-top:20px;font-size:24px;">Въпроси и дискусия</p>
+</section>
+
+<!-- 15 -->
+<section class="slide">
+  <span class="tag">Резервен слайд</span>
+  <h2>Въпросите от лекцията</h2>
+  <p class="sub">Ако преподавателят ги зададе след презентацията</p>
+  <div class="steps">
+    <div class="card"><div class="n">1</div><div><h3>За какво служи структурата за разбивка на риска (RBS)?</h3><p>Подрежда рисковете по категории (технически, сигурност, правни, организационни). Така по-трудно пропускаме цяла група рискове. При нас към всяка категория има въпроси от профила (слайд 5).</p></div></div>
+    <div class="card"><div class="n">2</div><div><h3>Каква е разликата между избягване и приемане?</h3><p>При избягването променяме плана, за да няма риск: AI съветите излизат от v1.0. При приемането не правим нищо предварително, а го покриваме, ако се случи: по-високата цена на агрегатора идва от резерва.</p></div></div>
+    <div class="card"><div class="n">3</div><div><h3>Какво е PERT?</h3><p>Метод с три оценки за всяка дейност (О, Н, П), очаквано време (О + 4Н + П) / 6 и стандартно отклонение. Така получаваме вероятност да спазим срока. При нас: 27% без резерв и 98,7% с резерва (слайд 9).</p></div></div>
+  </div>
+  <div class="num">15</div>
+</section>
+
+</body>
+</html>
