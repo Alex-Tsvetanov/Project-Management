@@ -1,0 +1,622 @@
+<!doctype html>
+<html lang="bg">
+<head>
+<meta charset="utf-8">
+<title>Избор на подход за управление</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,600;8..60,700&family=Rubik:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  @page { size: 1280px 720px; margin: 0; }
+  :root {
+    --navy: #14213d;
+    --navy-2: #24345c;
+    --cream: #f6f4ef;
+    --card: #fbfaf7;
+    --line: #dcd8cf;
+    --muted: #55607a;
+    --gold: #c9a227;
+    --constrain: #b23a48;
+    --enhance: #2f6fb0;
+    --accept: #3d8b5a;
+    --violet: #7a4fb5;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { background: var(--cream); }
+  body { font-family: "Rubik", "Helvetica Neue", Arial, sans-serif; color: var(--navy); font-size: 19px; line-height: 1.4; }
+  .slide { width: 1280px; height: 720px; padding: 64px 84px 56px; position: relative; overflow: hidden; page-break-after: always; background: var(--cream); }
+  .slide:last-child { page-break-after: auto; }
+  .dark { background: var(--navy); color: #f3efe6; }
+  h1, h2 { font-family: "Source Serif 4", Georgia, serif; font-weight: 700; letter-spacing: -0.01em; }
+  h1 { font-size: 64px; line-height: 1.08; }
+  h2 { font-size: 40px; line-height: 1.12; margin-bottom: 8px; }
+  .sub { color: var(--muted); font-size: 21px; margin-bottom: 26px; }
+  .dark .sub { color: #b9c3dc; }
+  .accent { width: 106px; height: 5px; background: var(--gold); margin-bottom: 26px; }
+  .num { position: absolute; left: 84px; bottom: 26px; font-size: 14px; color: var(--muted); }
+  .tag { display: inline-block; font-size: 13px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--gold); margin-bottom: 10px; }
+  .grid { display: grid; gap: 18px; }
+  .g2 { grid-template-columns: 1fr 1fr; }
+  .g3 { grid-template-columns: repeat(3, 1fr); }
+  .g4 { grid-template-columns: repeat(4, 1fr); gap: 14px; }
+  .g5 { grid-template-columns: repeat(5, 1fr); gap: 12px; }
+  .card { background: var(--card); border: 1px solid var(--line); border-radius: 10px; padding: 18px 20px; }
+  .card h3 { font-size: 20px; font-weight: 600; margin-bottom: 6px; }
+  .card p, .card li { font-size: 16.5px; color: #33405c; }
+  .card ul { padding-left: 18px; }
+  .card li { margin-bottom: 4px; }
+  .bar { border-top: 5px solid; }
+  .c { border-color: var(--constrain); } .e { border-color: var(--enhance); } .a { border-color: var(--accept); } .v { border-color: var(--violet); } .gd { border-color: var(--gold); }
+  .tc { color: var(--constrain); } .te { color: var(--enhance); } .ta { color: var(--accept); } .tv { color: var(--violet); }
+  table.data { width: 100%; border-collapse: collapse; font-size: 15.5px; }
+  table.data th { text-align: left; font-weight: 600; background: var(--navy); color: #fff; padding: 8px 10px; }
+  table.data td { padding: 7px 10px; border-bottom: 1px solid var(--line); vertical-align: top; color: #2b3754; }
+  table.data tr:nth-child(even) td { background: #fbfaf7; }
+  table.data td.r, table.data th.r { text-align: right; white-space: nowrap; }
+  table.data td.m, table.data th.m { text-align: center; white-space: nowrap; }
+  table.data tr.total td { font-weight: 600; border-top: 2px solid var(--navy); background: transparent; }
+  table.data.tight td, table.data.tight th { padding: 5px 8px; font-size: 14.5px; line-height: 1.3; }
+  .toc { border-top: 1px solid var(--line); }
+  .toc div { display: flex; gap: 60px; padding: 17px 0; border-bottom: 1px solid var(--line); font-size: 24px; font-weight: 500; }
+  .toc span { font-family: "Source Serif 4", Georgia, serif; font-size: 30px; width: 50px; }
+  .note { font-size: 15px; color: var(--muted); margin-top: 14px; }
+  .big { font-family: "Source Serif 4", Georgia, serif; font-size: 34px; font-weight: 700; }
+  .kpi { display: flex; gap: 14px; }
+  .kpi .card { flex: 1; text-align: center; padding: 12px 10px; }
+  .kpi .big { display: block; }
+  .kpi small { color: var(--muted); font-size: 14.5px; }
+  .steps { display: flex; flex-direction: column; gap: 12px; }
+  .steps .card { display: flex; gap: 16px; align-items: flex-start; padding: 14px 18px; }
+  .steps .n { font-family: "Source Serif 4", Georgia, serif; font-size: 30px; font-weight: 700; color: var(--gold); line-height: 1; width: 28px; flex: none; }
+
+  /* scores and pills */
+  .sc { display: inline-block; min-width: 34px; text-align: center; font-weight: 600; color: #fff; border-radius: 6px; padding: 1px 6px; font-size: 14px; }
+  .hi { background: #c8424f; } .md { background: #e0b43a; color: #3a2c00; } .lo { background: #4f9a69; } .nx { background: var(--navy-2); }
+  .pill { display: inline-block; font-size: 12.5px; font-weight: 600; padding: 2px 9px; border-radius: 99px; color: #fff; white-space: nowrap; }
+  .pill.wf { background: var(--navy-2); } .pill.ag { background: var(--enhance); } .pill.hy { background: var(--violet); } .pill.xp { background: var(--accept); }
+
+  /* decision matrix */
+  .dm td.s { text-align: center; font-weight: 600; font-size: 16px; }
+  .dm td.s5 { background: #dcefe2 !important; } .dm td.s4 { background: #ecf5ee !important; }
+  .dm td.s1 { background: #f6dfe1 !important; } .dm td.s2 { background: #fbeef0 !important; }
+  .dm th.hyc, .dm td.hyc { box-shadow: inset 2px 0 0 var(--violet), inset -2px 0 0 var(--violet); }
+  .bars { display: flex; flex-direction: column; gap: 14px; }
+  .bars .row { display: grid; grid-template-columns: 120px 1fr; align-items: center; gap: 12px; font-size: 16px; font-weight: 500; }
+  .bars .track { height: 38px; background: #ebe8e1; border-radius: 6px; }
+  .bars .fill { height: 100%; border-radius: 6px; display: flex; align-items: center; justify-content: flex-end; padding-right: 10px; color: #fff; font-weight: 600; font-size: 16px; }
+
+  /* timeline */
+  .tl { display: grid; grid-template-columns: 150px repeat(8, 1fr); column-gap: 4px; row-gap: 8px; align-items: stretch; }
+  .tl .mh { font-size: 14.5px; font-weight: 600; color: var(--muted); text-align: center; padding-bottom: 2px; border-bottom: 2px solid var(--line); }
+  .tl .ln { font-size: 15.5px; font-weight: 600; display: flex; align-items: center; color: var(--navy); }
+  .tl .ln small { display: block; font-weight: 400; color: var(--muted); font-size: 13px; }
+  .tl .b { border-radius: 6px; padding: 7px 9px; font-size: 13.5px; line-height: 1.25; color: #fff; display: flex; flex-direction: column; justify-content: center; min-height: 50px; }
+  .tl .b b { font-weight: 600; font-size: 14.5px; }
+  .tl .wfb { background: var(--navy-2); }
+  .tl .scb { background: var(--enhance); }
+  .tl .kbb { background: var(--accept); }
+  .tl .exb { background: #fff; color: var(--navy); border: 1.5px dashed var(--constrain); }
+  .tl .gt { display: flex; align-items: center; justify-content: flex-end; gap: 6px; font-size: 12.5px; font-weight: 600; color: var(--navy); text-align: right; line-height: 1.2; }
+  .tl .gt i { width: 14px; height: 14px; background: var(--gold); transform: rotate(45deg); flex: none; display: inline-block; }
+  .tl .empty { min-height: 46px; }
+
+  /* kanban */
+  .kb { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; }
+  .kb .col { background: #ebe8e1; border-radius: 8px; padding: 8px; min-height: 270px; }
+  .kb .col h4 { font-size: 13px; font-weight: 600; margin-bottom: 2px; }
+  .kb .col .wip { font-size: 11.5px; color: var(--constrain); font-weight: 600; margin-bottom: 8px; display: block; }
+  .kb .col .wip.nowip { color: var(--muted); font-weight: 400; }
+  .kb .t { background: #fff; border-radius: 6px; padding: 6px 7px; font-size: 12.5px; line-height: 1.25; margin-bottom: 6px; border-left: 4px solid var(--enhance); box-shadow: 0 1px 2px rgba(0,0,0,.08); }
+  .kb .t.must { border-left-color: var(--constrain); } .kb .t.should { border-left-color: #e0b43a; } .kb .t.bug { border-left-color: var(--violet); }
+
+  .quote { font-family: "Source Serif 4", Georgia, serif; font-size: 22px; line-height: 1.3; font-weight: 600; color: var(--navy); }
+  .ai-row { display: grid; grid-template-columns: 120px 1fr; gap: 10px; padding: 6px 0; border-bottom: 1px solid var(--line); font-size: 15px; color: #33405c; }
+  .ai-row:last-child { border-bottom: 0; }
+  .ai-row b { color: var(--navy); font-weight: 600; }
+  .pc li { margin-bottom: 7px; }
+</style>
+</head>
+<body>
+
+<!-- 1 -->
+<section class="slide dark" style="display:flex;flex-direction:column;justify-content:center;">
+  <div class="accent"></div>
+  <span class="tag">Лекция 6 · Съвременни подходи в управлението на ИТ проекти</span>
+  <h1>Избор на подход за<br>управление на ИТ проект</h1>
+  <p class="sub" style="margin-top:22px;font-size:24px;">Waterfall, Agile или Hybrid за мобилното приложение за лични финанси</p>
+  <p style="position:absolute;bottom:56px;left:84px;color:#b9c3dc;font-size:17px;">Технически университет – София · Управление на проекти · Упражнение</p>
+</section>
+
+<!-- 2 -->
+<section class="slide">
+  <h2>Съдържание</h2>
+  <p class="sub">Мобилно приложение за лични финанси: продължение на проекта от Лекции 1–5</p>
+  <div class="toc">
+    <div><span>01</span>Изходни данни и характеристики на проекта</div>
+    <div><span>02</span>Изисквания, ограничения и рискове</div>
+    <div><span>03</span>Сравнение на подходите и избор</div>
+    <div><span>04</span>Хибридният подход на практика: график, Scrum, Kanban и XP</div>
+    <div><span>05</span>AI: две дейности, рисковете и външното тестване</div>
+    <div><span>06</span>Предимства, недостатъци и изводи</div>
+  </div>
+  <div class="num">2</div>
+</section>
+
+<!-- 3 -->
+<section class="slide">
+  <span class="tag">01 · Изходни данни</span>
+  <h2>Какво носим от предишните лекции</h2>
+  <p class="sub">Подходът не се избира на празно място. Пет решения вече стесняват избора</p>
+  <div class="grid g5">
+    <div class="card bar e">
+      <h3>Лекция 1 · Жизнен цикъл</h3>
+      <ul>
+        <li>Пет фази и ключови етапи: дизайн (м.1), MVP (м.3), бета (м.5), пускане (м.6)</li>
+        <li>Стават вратите на хибрида</li>
+      </ul>
+    </div>
+    <div class="card bar a">
+      <h3>Лекция 2 · SWOT и SMART</h3>
+      <ul>
+        <li>Цел 1: v1.0 в двата магазина до месец 6</li>
+        <li>Заплахи: сигурност, GDPR, банкови API</li>
+      </ul>
+    </div>
+    <div class="card bar c">
+      <h3>Лекция 3 · Обхват</h3>
+      <ul>
+        <li>Времето е фиксирано, обхватът се оптимизира, разходите са компромис</li>
+        <li>MoSCoW и двуседмични спринтове</li>
+      </ul>
+    </div>
+    <div class="card bar gd">
+      <h3>Лекция 4 · Оценка</h3>
+      <ul>
+        <li>240 човекодни</li>
+        <li>База 61&nbsp;644&nbsp;€ + резерв 6&nbsp;164&nbsp;€</li>
+        <li>AI съветите са във v1.1</li>
+      </ul>
+    </div>
+    <div class="card bar v">
+      <h3>Лекция 5 · Риск</h3>
+      <ul>
+        <li>4 червени риска: Т1, С2, С1, П1</li>
+        <li>PERT: 27% без резерв, 98,7% с резерва</li>
+      </ul>
+    </div>
+  </div>
+  <div class="card" style="margin-top:20px;">
+    <p><b>Въпросът сега:</b> как да работи екипът, за да спази фиксирания срок, когато част от изискванията ще се изяснят чак след MVP и бетата.</p>
+  </div>
+  <div class="num">3</div>
+</section>
+
+<!-- 4 -->
+<section class="slide">
+  <span class="tag">01 · Характеристики</span>
+  <h2>Основни характеристики на проекта</h2>
+  <p class="sub">Мобилно приложение за хора, което чете банкови данни и анализира разходите</p>
+  <div class="kpi" style="margin-bottom:18px;">
+    <div class="card"><span class="big">6 месеца</span><small>фиксиран срок, пускане в м.6</small></div>
+    <div class="card"><span class="big">5 души</span><small>ръководител, дизайнер, 2 разработчици, QA</small></div>
+    <div class="card"><span class="big">61&nbsp;644&nbsp;€</span><small>база + резерв 6&nbsp;164&nbsp;€</small></div>
+    <div class="card"><span class="big">1 кодова база</span><small>Flutter за iOS и Android</small></div>
+  </div>
+  <div class="grid g4">
+    <div class="card bar e">
+      <h3>Продукт</h3>
+      <ul>
+        <li>Разходи, категории, месечен бюджет</li>
+        <li>Връзка с банката през PSD2 агрегатор</li>
+        <li>Анализът на разходите ни отличава</li>
+      </ul>
+    </div>
+    <div class="card bar gd">
+      <h3>Пазар и клиент</h3>
+      <ul>
+        <li>Конкурентен пазар, пускането е обвързано с началото на годината</li>
+        <li>Клиентът дава човек, който приема резултата на всеки 2 седмици</li>
+      </ul>
+    </div>
+    <div class="card bar c">
+      <h3>Регулации и външни страни</h3>
+      <ul>
+        <li>GDPR и PSD2</li>
+        <li>Тест за проникване от външна фирма</li>
+        <li>Преглед в App Store и Google Play</li>
+      </ul>
+    </div>
+    <div class="card bar a">
+      <h3>Екип</h3>
+      <ul>
+        <li>Малък, на едно място, с опит в мобилната разработка (SWOT)</li>
+        <li>Няма резервен разработчик (О1)</li>
+      </ul>
+    </div>
+  </div>
+  <div class="num">4</div>
+</section>
+
+<!-- 5 -->
+<section class="slide">
+  <span class="tag">02 · Изисквания</span>
+  <h2>Доколко са ясни изискванията и ще се променят ли</h2>
+  <p class="sub">Групите от MoSCoW (Лекция 3) плюс нефункционалните изисквания</p>
+  <table class="data tight">
+    <tr><th style="width:15%">Група</th><th style="width:30%">Примери</th><th style="width:12%">Дефинирани</th><th style="width:13%">Промяна</th><th>Защо</th></tr>
+    <tr><td><b>Нефункционални</b></td><td>Сигурност, GDPR и PSD2, данни в ЕС, отговор под 3 сек.</td><td>Ясно</td><td><span class="sc lo">ниска</span></td><td>Идват от закона и от договора с агрегатора</td></tr>
+    <tr><td><b>Must</b></td><td>Разходи, категории, месечен бюджет, връзка с банка</td><td>Ясно</td><td><span class="sc lo">ниска</span></td><td>Функциите са ясни. Неясен е форматът на данните от банките (Т1)</td></tr>
+    <tr><td><b>Should</b></td><td>Графики и тенденции, известия при превишен бюджет</td><td>Частично</td><td><span class="sc md">средна</span></td><td>Видът на анализа зависи от отзивите след MVP</td></tr>
+    <tr><td><b>Could</b></td><td>AI съвети, цели за спестяване</td><td>Неясно</td><td><span class="sc hi">висока</span></td><td>Не знаем как хората ще ги ползват. Отложени за v1.1</td></tr>
+    <tr><td><b>Won't (v1)</b></td><td>Инвестиции, семейни сметки, уеб версия</td><td>Изключени</td><td><span class="sc nx">натиск</span></td><td>Клиентът ги иска (О2). Списъкът е в договора</td></tr>
+  </table>
+  <div class="grid" style="grid-template-columns: 1.35fr 1fr; margin-top:18px;">
+    <div class="card bar e">
+      <h3>Извод</h3>
+      <p>Ядрото (Must и нефункционалните) е стабилно. Стойността за потребителя, т.е. анализът на разходите, ще се уточнява с отзивите. Нито всичко е известно, нито всичко се мени.</p>
+    </div>
+    <div class="card">
+      <p class="quote">„Днес знаем по-малко за проекта, отколкото във всеки следващ момент в бъдещето.“</p>
+      <p class="note" style="margin-top:8px;">Chet Hendrickson, цитат от лекцията</p>
+    </div>
+  </div>
+  <div class="num">5</div>
+</section>
+
+<!-- 6 -->
+<section class="slide">
+  <span class="tag">02 · Ограничения и рискове</span>
+  <h2>Ограничения, рискове и какво искат от подхода</h2>
+  <p class="sub">Рисковете от Лекция 5 подсказват какъв подход ни трябва</p>
+  <table class="data tight">
+    <tr><th style="width:32%">Ограничение или риск</th><th class="m">Оценка</th><th style="width:34%">Какво иска от подхода</th><th>Кой го дава</th></tr>
+    <tr><td><b>Срок:</b> пускане до края на м.6 (фиксиран)</td><td class="m"><span class="sc nx">фикс.</span></td><td>Твърди дати и видим напредък</td><td><span class="pill wf">Waterfall</span> врати + <span class="pill ag">Scrum</span> спринтове</td></tr>
+    <tr><td><b>Т1</b> Банките връщат данни в различен вид</td><td class="m"><span class="sc hi">16</span></td><td>Ранен прототип, кратки итерации</td><td><span class="pill ag">Agile</span></td></tr>
+    <tr><td><b>С2</b> AI съветите дават грешни отговори</td><td class="m"><span class="sc hi">16</span></td><td>Отделен цикъл и външен тест преди пускане</td><td><span class="pill hy">Hybrid</span> врата за v1.1</td></tr>
+    <tr><td><b>С1</b> Изтичане на финансови данни</td><td class="m"><span class="sc hi">15</span></td><td>Тест за проникване с дата, сигурност във всеки спринт</td><td><span class="pill wf">Waterfall</span> + Definition of Done</td></tr>
+    <tr><td><b>П1</b> Нарушение на GDPR или PSD2</td><td class="m"><span class="sc hi">15</span></td><td>Документи и правна проверка с дата</td><td><span class="pill wf">Waterfall</span></td></tr>
+    <tr><td><b>Т2</b> Основните функции се забавят</td><td class="m"><span class="sc md">12</span></td><td>План–факт на всеки 2 седмици</td><td><span class="pill ag">Scrum</span> burndown</td></tr>
+    <tr><td><b>О2</b> Нови искания от клиента</td><td class="m"><span class="sc md">12</span></td><td>Подреден беклог и искане за промяна</td><td><span class="pill ag">Scrum</span> продуктов собственик</td></tr>
+    <tr><td><b>О1</b> Само двама разработчици</td><td class="m"><span class="sc md">10</span></td><td>Двамата познават целия код</td><td><span class="pill xp">XP</span> работа по двойки</td></tr>
+  </table>
+  <p class="note">Предизвикателства извън регистъра: декемврийските празници в м.6, прегледът в магазините и ниското доверие при споделяне на банкови данни (SWOT).</p>
+  <div class="num">6</div>
+</section>
+
+<!-- 7 -->
+<section class="slide">
+  <span class="tag">03 · Сравнение</span>
+  <h2>Waterfall, Agile или Hybrid: претеглено сравнение</h2>
+  <p class="sub">Оценка от 1 до 5 по шест критерия. Тежестите идват от приоритетната матрица и от регистъра на риска</p>
+  <div class="grid" style="grid-template-columns: 1.75fr 1fr; gap:28px;">
+    <table class="data dm">
+      <tr><th>Критерий</th><th class="r">Тежест</th><th class="m">Waterfall</th><th class="m">Agile</th><th class="m hyc">Hybrid</th></tr>
+      <tr><td>Неясни и променливи изисквания (обхватът се оптимизира)</td><td class="r">25%</td><td class="s s1">1</td><td class="s s5">5</td><td class="s s4 hyc">4</td></tr>
+      <tr><td>Фиксиран срок и ключови етапи</td><td class="r">20%</td><td class="s">3</td><td class="s">3</td><td class="s s5 hyc">5</td></tr>
+      <tr><td>Таван на бюджета, одобрение от спонсора</td><td class="r">15%</td><td class="s s4">4</td><td class="s s2">2</td><td class="s s4 hyc">4</td></tr>
+      <tr><td>Регулации и външни проверки</td><td class="r">15%</td><td class="s s5">5</td><td class="s s2">2</td><td class="s s4 hyc">4</td></tr>
+      <tr><td>Ранно откриване на техническия риск (Т1)</td><td class="r">15%</td><td class="s s1">1</td><td class="s s5">5</td><td class="s s5 hyc">5</td></tr>
+      <tr><td>Малък екип, клиентът е на разположение</td><td class="r">10%</td><td class="s s2">2</td><td class="s s5">5</td><td class="s s4 hyc">4</td></tr>
+      <tr class="total"><td>Претеглена оценка</td><td class="r">100%</td><td class="m">2,55</td><td class="m">3,70</td><td class="m hyc">4,35</td></tr>
+    </table>
+    <div>
+      <div class="bars">
+        <div class="row"><span>Waterfall</span><div class="track"><div class="fill" style="width:51%;background:var(--navy-2)">2,55</div></div></div>
+        <div class="row"><span>Agile</span><div class="track"><div class="fill" style="width:74%;background:var(--enhance)">3,70</div></div></div>
+        <div class="row"><span><b>Hybrid</b></span><div class="track"><div class="fill" style="width:87%;background:var(--violet)">4,35</div></div></div>
+      </div>
+      <div class="card" style="margin-top:20px;">
+        <p style="font-size:15.5px;"><b>Срокът:</b> Waterfall дава дати, но грешките излизат в тестовете накрая. Agile пази ритъма, но не обещава целия обхват до дата. Затова и двата са с 3.</p>
+      </div>
+      <p class="note"><b>Проверка:</b> ако тежестта на неясните изисквания се удвои до 50%, Hybrid пак е първи: 4,23 срещу 4,13 за Agile.</p>
+    </div>
+  </div>
+  <div class="num">7</div>
+</section>
+
+<!-- 8 -->
+<section class="slide">
+  <span class="tag">03 · Избор</span>
+  <h2>Избор: Hybrid</h2>
+  <p class="sub">Фиксирана рамка, гъвкаво съдържание: Waterfall за фиксираното, Scrum за променливото</p>
+  <div class="grid g3">
+    <div class="card bar" style="border-color:var(--navy-2)">
+      <h3>Защо не Waterfall</h3>
+      <ul>
+        <li>Should и Could ще се сменят след MVP и бетата</li>
+        <li>Разликите в банковите данни (Т1) излизат чак при интеграцията в м.3–4</li>
+        <li>Недостатъкът от лекцията: грешките се откриват в последните етапи</li>
+      </ul>
+    </div>
+    <div class="card bar e">
+      <h3>Защо не само Agile</h3>
+      <ul>
+        <li>Срокът и таванът на бюджета са обещани на спонсора</li>
+        <li>GDPR, PSD2, тестът за проникване и магазините искат документи и дати</li>
+        <li>Лекцията: при стабилни изисквания predictive или hybrid е по-ефективен</li>
+      </ul>
+    </div>
+    <div class="card bar v">
+      <h3 class="tv">Hybrid</h3>
+      <ul>
+        <li><b>Рамка (Waterfall):</b> фазите от Лекция 1, 5 врати, бюджетът и резервът, регистърът на риска</li>
+        <li><b>Ядро (Scrum):</b> 8 спринта по 2 седмици до бетата, беклог по MoSCoW</li>
+        <li><b>Практики:</b> XP в кода, Kanban след пускането</li>
+      </ul>
+    </div>
+  </div>
+  <div class="grid g3" style="margin-top:18px;">
+    <div class="card" style="padding:14px 18px;"><p><span class="pill" style="background:var(--constrain)">Време · Constrain</span><br><span style="display:block;margin-top:6px;">Вратите и фиксираната дължина на спринтовете пазят датата</span></p></div>
+    <div class="card" style="padding:14px 18px;"><p><span class="pill" style="background:var(--enhance)">Обхват · Enhance</span><br><span style="display:block;margin-top:6px;">Продуктовият беклог поема промените</span></p></div>
+    <div class="card" style="padding:14px 18px;"><p><span class="pill" style="background:var(--accept)">Разходи · Accept</span><br><span style="display:block;margin-top:6px;">Резервът от 6&nbsp;164&nbsp;€ е при спонсора, отпуска се на врата</span></p></div>
+  </div>
+  <p class="note">Приоритетната матрица от Лекция 3 се връзва директно с хибрида: всеки от трите критерия има свой механизъм.</p>
+  <div class="num">8</div>
+</section>
+
+<!-- 9 -->
+<section class="slide">
+  <span class="tag">04 · График</span>
+  <h2>Как изглеждат осемте месеца</h2>
+  <p class="sub">Пет врати от Waterfall, 10 спринта от Scrum, Kanban от месец 6</p>
+  <div class="tl">
+    <div></div>
+    <div class="mh">м.1</div><div class="mh">м.2</div><div class="mh">м.3</div><div class="mh">м.4</div><div class="mh">м.5</div><div class="mh">м.6</div><div class="mh">м.7</div><div class="mh">м.8</div>
+
+    <div class="ln"><span>Фази<small>Waterfall</small></span></div>
+    <div class="b wfb"><b>Иницииране и планиране</b>договори, бюджет</div>
+    <div class="b wfb" style="grid-column: span 4;"><b>Изпълнение на v1.0</b>обхват по MoSCoW, план–факт на всяка врата</div>
+    <div class="b wfb"><b>Пускане</b>магазини, документация</div>
+    <div class="b wfb" style="grid-column: span 2;"><b>Версия 1.1</b>AI съвети</div>
+
+    <div class="ln"><span>Спринтове<small>Scrum, по 2 седмици</small></span></div>
+    <div class="b scb"><b>Спринт 0</b>дизайн, прототип с 2 банки</div>
+    <div class="b scb" style="grid-column: span 2;"><b>Спринти 1–4</b>Must функции → MVP</div>
+    <div class="b scb" style="grid-column: span 2;"><b>Спринти 5–8</b>Should функции, поправки → бета</div>
+    <div class="empty"></div>
+    <div class="b scb"><b>Спринти<br>9–10</b>AI съвети</div>
+    <div class="empty"></div>
+
+    <div class="ln"><span>Kanban<small>непрекъснат поток</small></span></div>
+    <div class="empty" style="grid-column: span 5;"></div>
+    <div class="b kbb" style="grid-column: span 3;"><b>Поддръжка</b>бъгове, отзиви от магазините, критичен бъг до&nbsp;24&nbsp;ч.</div>
+
+    <div class="ln"><span>Външни проверки<small>с фиксирана дата</small></span></div>
+    <div class="empty"></div>
+    <div class="b exb"><b>Правна проверка</b>GDPR и PSD2</div>
+    <div class="empty"></div>
+    <div class="b exb"><b>Тест за проникване</b>външна фирма</div>
+    <div class="empty"></div>
+    <div class="b exb"><b>Магазини</b>подаване 3 седм. по-рано</div>
+    <div class="empty"></div>
+    <div class="b exb"><b>Външен тест на AI</b>2 седмици</div>
+
+    <div class="ln"><span>Врати<small>решение на спонсора</small></span></div>
+    <div class="gt"><span>В1 дизайн<br>и бюджет</span><i></i></div>
+    <div></div>
+    <div class="gt"><span>В2 MVP</span><i></i></div>
+    <div></div>
+    <div class="gt"><span>В3 бета</span><i></i></div>
+    <div class="gt"><span>В4 пускане<br>на v1.0</span><i></i></div>
+    <div></div>
+    <div class="gt"><span>В5 v1.1<br>(≤ 2% грешки)</span><i></i></div>
+  </div>
+  <p class="note" style="margin-top:14px;">На всяка врата спонсорът преглежда план–факта по бюджета и регистъра на риска (Лекции 4–5). Буферът от 2 седмици преди пускането остава.</p>
+  <div class="num">9</div>
+</section>
+
+<!-- 10 -->
+<section class="slide">
+  <span class="tag">04 · Scrum</span>
+  <h2>Scrum в нашия екип от петима</h2>
+  <p class="sub">Ролите, събитията и артефактите от лекцията, приложени към проекта</p>
+  <div class="grid g3">
+    <div class="card bar gd">
+      <h3>Продуктов собственик</h3>
+      <p>Представител на клиента. Подрежда беклога по MoSCoW, приема резултата на прегледа и решава исканията за промяна (О2).</p>
+    </div>
+    <div class="card bar v">
+      <h3>Scrum Master</h3>
+      <p>Ръководителят на проекта. Пази процеса и маха пречките. Отговаря и за рамката: вратите, бюджета и регистъра на риска.</p>
+    </div>
+    <div class="card bar e">
+      <h3>Екип за разработка</h3>
+      <p>UX дизайнер, 2 разработчици и QA. Сами решават кой какво взима от спринтовия беклог.</p>
+    </div>
+  </div>
+  <div class="grid" style="grid-template-columns: 1fr 1.15fr; margin-top:18px;">
+    <table class="data tight">
+      <tr><th>Събитие (спринт от 2 седмици)</th><th class="r">Време на човек</th></tr>
+      <tr><td>Планиране на спринта</td><td class="r">2 ч.</td></tr>
+      <tr><td>Ежедневна среща, 15 мин. × 10 дни</td><td class="r">2,5 ч.</td></tr>
+      <tr><td>Преглед с клиента (Sprint Review)</td><td class="r">1 ч.</td></tr>
+      <tr><td>Ретроспектива</td><td class="r">1 ч.</td></tr>
+      <tr class="total"><td>Общо, от 80 работни часа</td><td class="r">6,5 ч. ≈ 8%</td></tr>
+    </table>
+    <div class="card">
+      <h3>Артефакти</h3>
+      <ul>
+        <li><b>Продуктов беклог:</b> MoSCoW и работните пакети от Лекция 3</li>
+        <li><b>Спринтов беклог:</b> това, което екипът поема за 2 седмици</li>
+        <li><b>Инкремент:</b> работеща версия в TestFlight и Google Play на всеки 2 седмици</li>
+        <li><b>Definition of Done:</b> прегледан код, тестове в CI, без лични данни в логовете, проверено на iOS и Android</li>
+      </ul>
+    </div>
+  </div>
+  <div class="num">10</div>
+</section>
+
+<!-- 11 -->
+<section class="slide">
+  <span class="tag">04 · Kanban и XP</span>
+  <h2>Kanban за потока, XP за качеството на кода</h2>
+  <p class="sub">Другите Agile подходи от лекцията, всеки там, където помага</p>
+  <div class="grid" style="grid-template-columns: 1.3fr 1fr; gap:24px;">
+    <div>
+      <div class="kb">
+        <div class="col"><h4>Беклог</h4><span class="wip nowip">без лимит</span>
+          <div class="t should">Покажи тенденцията на разходите за 3 месеца</div>
+          <div class="t should">Изпрати известие при превишен бюджет</div>
+          <div class="t">Експортирай месечния отчет в PDF</div>
+        </div>
+        <div class="col"><h4>В работа</h4><span class="wip">WIP 2</span>
+          <div class="t must">Прочети транзакциите от банка 2</div>
+          <div class="t must">Изчисли разхода по категория за месеца</div>
+        </div>
+        <div class="col"><h4>Преглед на кода</h4><span class="wip">WIP 2</span>
+          <div class="t must">Свържи сметката през агрегатора</div>
+        </div>
+        <div class="col"><h4>Тест</h4><span class="wip">WIP 3</span>
+          <div class="t bug">Поправи двойно записана транзакция</div>
+          <div class="t must">Задай месечен бюджет по категория</div>
+        </div>
+        <div class="col"><h4>Готово</h4><span class="wip nowip">&nbsp;</span>
+          <div class="t must">Въведи разход ръчно</div>
+          <div class="t must">Влез с биометрия</div>
+        </div>
+      </div>
+      <p class="note" style="margin-top:10px;">Дъската е в Jira. В спринтовете показва потока, а от м.6 работи сама: бъговете и отзивите идват непрекъснато, без спринтове. Лимитът „В работа“ е по една задача на разработчик.</p>
+    </div>
+    <div class="steps">
+      <div class="card"><div><h3>Работа по двойки</h3><p style="font-size:15px">За банковата интеграция и кода за сигурност. Така двамата разработчици познават всичко (О1).</p></div></div>
+      <div class="card"><div><h3>TDD</h3><p style="font-size:15px">Първо тестът за всяко изчисление с пари: суми, категории, закръгляне в евро.</p></div></div>
+      <div class="card"><div><h3>Рефакториране и CI</h3><p style="font-size:15px">Всяко сливане минава тестовете в GitHub Actions.</p></div></div>
+      <div class="card"><div><h3>От FDD</h3><p style="font-size:15px">Функциите са записани като „действие–резултат–обект“ и всяка е до 2 седмици работа.</p></div></div>
+    </div>
+  </div>
+  <div class="num">11</div>
+</section>
+
+<!-- 12 -->
+<section class="slide">
+  <span class="tag">05 · AI</span>
+  <h2>Две дейности, в които AI помага</h2>
+  <p class="sub">Едната е в управлението, другата в изпълнението. AI предлага, човек решава</p>
+  <div class="grid g2">
+    <div class="card bar gd">
+      <h3>1 · Управление: отзиви и планиране на спринтовете</h3>
+      <div class="ai-row"><b>Какво</b><span>Групира отзивите от бетата и магазините по теми, предлага потребителски истории с критерии за приемане, прогнозира закъснения по скоростта на екипа</span></div>
+      <div class="ai-row"><b>Кой проверява</b><span>Продуктовият собственик одобрява всяка история. Ръководителят сравнява прогнозата с burndown</span></div>
+      <div class="ai-row"><b>Цена</b><span>LLM API, под 10&nbsp;€ на месец (допускане)</span></div>
+      <div class="ai-row"><b>Време</b><span>1 ден настройка, около 1 час проверка на спринт</span></div>
+      <div class="ai-row"><b>Как мерим</b><span>Колко истории са приети без промяна. Сигнал за Т2 преди края на м.3</span></div>
+    </div>
+    <div class="card bar e">
+      <h3>2 · Изпълнение: AI асистент при двойките и TDD</h3>
+      <div class="ai-row"><b>Какво</b><span>Предлага тестове за изчисленията с пари и за различните формати на банковите данни (Т1), предлага рефакториране</span></div>
+      <div class="ai-row"><b>Кой проверява</b><span>Разработчикът валидира резултата (както е в лекцията), вторият разработчик преглежда кода</span></div>
+      <div class="ai-row"><b>Цена</b><span>3 лиценза × 6 месеца × около 20&nbsp;€ ≈ 360&nbsp;€. Изплаща се, ако спести 2 човекодни (440&nbsp;€)</span></div>
+      <div class="ai-row"><b>Време</b><span>2 дни въвеждане в спринт 0, правилата влизат в Definition of Done</span></div>
+      <div class="ai-row"><b>Как мерим</b><span>Дял на приетите предложения, дефекти от QA и от теста за проникване</span></div>
+    </div>
+  </div>
+  <p class="note">Продължаваме практиката от Лекции 4 и 5, където AI беше второ мнение за оценката и за рисковете. Цените на лицензите и API са допускания и се потвърждават с оферти.</p>
+  <div class="num">12</div>
+</section>
+
+<!-- 13 -->
+<section class="slide">
+  <span class="tag">05 · AI рискове</span>
+  <h2>Рисковете от AI и как ги контролираме</h2>
+  <p class="sub">И колко струва външното тестване на самата AI интеграция</p>
+  <div class="grid" style="grid-template-columns: 1.2fr 1fr; gap:22px;">
+    <table class="data tight">
+      <tr><th style="width:40%">Риск</th><th>Контрол</th></tr>
+      <tr><td>Несигурен или грешен код от асистента</td><td>Преглед от втория разработчик, първо тестът (TDD), статичен анализ в CI, тест за проникване в м.4 (С1)</td></tr>
+      <tr><td>Лични или банкови данни стигат до доставчика на AI (П1)</td><td>Бизнес план без обучение върху нашите данни. В заявките само тестови данни от средата на агрегатора. Юристът проверява в м.2</td></tr>
+      <tr><td>Измислени изисквания или грешно обобщение на отзивите</td><td>AI не подрежда приоритети. Всяка история сочи оригиналните отзиви и се одобрява от продуктовия собственик</td></tr>
+      <tr><td>Прекалено доверие и спад в уменията</td><td>Ретроспективата следи дела на AI кода. Кодът за пари и сигурност се пише по двойки</td></tr>
+      <tr><td><b>С2:</b> AI съветите в самия продукт (v1.1)</td><td>Отделна врата В5: без външен тест няма пускане</td></tr>
+    </table>
+    <div class="card bar c" style="padding:16px 18px;">
+      <h3>Външно тестване на AI интеграцията</h3>
+      <table class="data tight" style="margin-top:4px;">
+        <tr><td>AI инструментите на екипа: покрити от теста за проникване (м.4) и правната проверка (м.2), вече в бюджета</td><td class="r">0&nbsp;€</td></tr>
+        <tr><td>AI съвети v1.1: 200 тестови профила, prompt injection, GDPR, отговор под 3 сек.</td><td class="r"><b>1&nbsp;500&nbsp;€</b></td></tr>
+        <tr><td>Регресия на AI в спринти 9–10 (LLM API)</td><td class="r">300&nbsp;€</td></tr>
+        <tr class="total"><td>Време: 2 седмици в м.8, извън критичния път на v1.0</td><td class="r">2 седм.</td></tr>
+      </table>
+      <p class="note" style="margin-top:10px;"><b>Праг:</b> над 2% грешни отговора и v1.1 не излиза. AI инструментите (≈ 420&nbsp;€, 0,7% от базата) искаме от спонсора на врата В1.</p>
+    </div>
+  </div>
+  <div class="num">13</div>
+</section>
+
+<!-- 14 -->
+<section class="slide">
+  <span class="tag">06 · Оценка на избора</span>
+  <h2>Предимства и недостатъци на Hybrid при нас</h2>
+  <p class="sub">Недостатъците не изчезват. Затова всеки има мярка</p>
+  <div class="grid" style="grid-template-columns: 1fr 1.6fr; gap:22px;">
+    <div class="card bar a">
+      <h3 class="ta">Предимства</h3>
+      <ul class="pc">
+        <li>Т1 се вижда в м.1, а не при интеграцията в м.3–4</li>
+        <li>Клиентът вижда работещ продукт 8 пъти до бетата</li>
+        <li>Промените влизат в беклога, а срокът не мърда</li>
+        <li>Спонсорът получава 5 ясни врати с план–факт</li>
+        <li>Правната проверка и тестът за проникване имат дати</li>
+      </ul>
+    </div>
+    <table class="data tight">
+      <tr><th style="width:48%">Недостатък</th><th>Мярка</th></tr>
+      <tr><td>Двойна администрация: документи за вратите и събития на Scrum (≈ 8% от времето)</td><td>Кратки шаблони за вратите. Документите са част от Definition of Done</td></tr>
+      <tr><td>Ръководителят е и Scrum Master: контрол срещу самоорганизация</td><td>Екипът сам разпределя задачите. Ръководителят решава само за рамката</td></tr>
+      <tr><td>Беклогът расте, а срокът е фиксиран (О2)</td><td>„Won't“ е в договора. Нова функция влиза само ако друга излезе</td></tr>
+      <tr><td>Зависим от времето на клиента</td><td>Ако продуктовият собственик липсва на преглед, решава ръководителят по MoSCoW</td></tr>
+      <tr><td>В малък екип събитията и двойките тежат повече</td><td>Двойки само за рисковия код. Събитията са със строго ограничено време</td></tr>
+    </table>
+  </div>
+  <div class="num">14</div>
+</section>
+
+<!-- 15 -->
+<section class="slide">
+  <span class="tag">06 · Изводи</span>
+  <h2>Какво научихме</h2>
+  <p class="sub">Подходът се избира според проекта, а не според модата</p>
+  <div class="grid g2">
+    <div class="card"><h3>1. Няма един най-добър подход</h3><p>Waterfall печели при ясни изисквания, Agile при неясни. Нашият проект е по средата, затова Hybrid има 4,35 срещу 3,70 за Agile.</p></div>
+    <div class="card"><h3>2. Предишните лекции избраха вместо нас</h3><p>Приоритетната матрица даде тежестите, а рисковете показаха какво трябва да може подходът.</p></div>
+    <div class="card"><h3>3. Хибридът има цена</h3><p>Около 8% от времето отива за събития, плюс документи за вратите. Плащаме я за ранна обратна връзка и ясен контрол.</p></div>
+    <div class="card"><h3>4. AI помага, но се проверява</h3><p>В управлението и в кода всяко предложение минава през човек. AI функцията в продукта минава външен тест: 1&nbsp;500&nbsp;€ и 2 седмици.</p></div>
+  </div>
+  <div class="num">15</div>
+</section>
+
+<!-- 16 -->
+<section class="slide dark" style="display:flex;flex-direction:column;justify-content:center;">
+  <div class="accent"></div>
+  <h1>Благодарим!</h1>
+  <p class="sub" style="margin-top:20px;font-size:24px;">Въпроси и дискусия</p>
+</section>
+
+<!-- 17 -->
+<section class="slide">
+  <span class="tag">Резервен слайд</span>
+  <h2>Въпросите от лекцията</h2>
+  <p class="sub">Ако преподавателят ги зададе след презентацията</p>
+  <div class="steps">
+    <div class="card"><div class="n">1</div><div><h3>Защо традиционният подход е по-малко ефективен, когато обхватът и технологията не са добре познати?</h3><p>Waterfall приема, че изискванията са известни в началото. Ако не са, грешките излизат чак при тестването, когато промяната е най-скъпа. При нас разликите в банковите данни (Т1) щяха да излязат в м.3–4, а не в м.1.</p></div></div>
+    <div class="card"><div class="n">2</div><div><h3>Какво е итеративно и инкрементално развитие? Защо е полезно при нови продукти?</h3><p>Итеративно: повтаряме цикъла планиране, разработка, тест, преглед. Инкрементално: всеки цикъл добавя работеща част. Така учим от потребителите рано. При нас: MVP в м.3, бета в м.5, 8 прегледа с клиента.</p></div></div>
+    <div class="card"><div class="n">3</div><div><h3>Кои са основните недостатъци на Agile?</h3><p>От лекцията: при стабилни изисквания predictive или hybrid е по-ефективен; при лоша комуникация продуктът може да е нестабилен; промените искат повече време за управление. Плюс: трудно се обещават срок и бюджет предварително.</p></div></div>
+  </div>
+  <div class="num">17</div>
+</section>
+
+<!-- 18 -->
+<section class="slide">
+  <span class="tag">Резервен слайд</span>
+  <h2>Същият метод за примерните проекти</h2>
+  <p class="sub">Трите проекта от упражнението и нашият, по същите въпроси</p>
+  <table class="data">
+    <tr><th style="width:21%">Проект</th><th style="width:17%">Изисквания</th><th style="width:17%">Ограничения</th><th style="width:11%">Подход</th><th>Защо</th></tr>
+    <tr><td><b>1.</b> Мобилно приложение за здравеопазване</td><td>Неясни, редовни актуализации</td><td>Здравни данни (GDPR)</td><td><span class="pill ag">Agile</span></td><td>Scrum за новите функции, Kanban за актуализациите. Сигурността е в Definition of Done</td></tr>
+    <tr><td><b>2.</b> Корпоративен сайт на финансова институция</td><td>Ясни: дизайн, функции, интеграции</td><td>Твърд срок, висока точност</td><td><span class="pill wf">Waterfall</span></td><td>Изискванията са известни, приемането е по спецификация. Рискът от промени е малък</td></tr>
+    <tr><td><b>3.</b> Нова версия на e-commerce платформа</td><td>Неясни, постоянно се менят</td><td>Несигурни срокове</td><td><span class="pill ag">Agile</span></td><td>Scrum за новите функции, Kanban за работещата платформа. Прогнозата се обновява всеки спринт</td></tr>
+    <tr><td><b>Нашият:</b> приложение за лични финанси</td><td>Ядрото е ясно, анализът се уточнява</td><td>Фиксиран срок, GDPR и PSD2</td><td><span class="pill hy">Hybrid</span></td><td>Waterfall рамка за срока и регулациите, Scrum за променливия обхват</td></tr>
+  </table>
+  <div class="num">18</div>
+</section>
+
+</body>
+</html>
